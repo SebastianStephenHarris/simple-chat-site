@@ -9,7 +9,7 @@ function enterChat() {
   document.getElementById("chat").style.display = "block";
 
   // Set your Render WebSocket URL here:
-  ws = new WebSocket("wss://simple-ws-chat.onrender.com");
+  ws = new WebSocket("wss://simple-chat-backend-1rop.onrender.com");
 
   ws.onmessage = event => {
     const div = document.createElement("div");
