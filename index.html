@@ -14,40 +14,49 @@
   <button onclick="enterChat()">Enter Chat</button>
 </div>
 
-<div id="chat" class="panel" style="display:none;">
-  <h2>Chat</h2>
+<div id="chat" class="chatLayout" style="display:none;">
 
-  <div id="messages"></div>
-  <div id="typing"></div>
+  <!-- LEFT: emoji/emoticon panel -->
+  <div id="sidePanel">
+    <h3>Emoji</h3>
+    <div id="emojiList"></div>
 
-  <!-- toolbar -->
-  <div id="toolbar">
-    <button type="button" onclick="toggleEmojiPopup()">😊</button>
-    <button type="button" onclick="triggerImageUpload()">📷</button>
-    <button type="button" onclick="toggleGifPicker()">GIF</button>
+    <h3>Emoticons</h3>
+    <div id="emoticonList"></div>
   </div>
 
-  <!-- emoji popup -->
-  <div id="emojiPopup" class="popup hidden"></div>
+  <!-- RIGHT: chat area -->
+  <div id="chatMain">
 
-  <!-- gif picker -->
-  <div id="gifPicker" class="popup hidden">
-    <input id="gifSearch" placeholder="Search GIFs..." />
-    <button type="button" onclick="searchGifs()">Search</button>
-    <div id="gifResults"></div>
+    <div id="messages"></div>
+    <div id="typing"></div>
+
+    <div id="replyBar" style="display:none;">
+      <span id="replyText"></span>
+      <button onclick="clearReply()">✕</button>
+    </div>
+
+    <!-- INPUT BAR (DISCORD STYLE) -->
+    <div id="inputBar">
+
+      <button class="iconBtn" onclick="triggerImageUpload()">📷</button>
+      <button class="iconBtn" onclick="toggleGifPicker()">GIF</button>
+
+      <input id="messageInput" placeholder="Message..." />
+
+      <button id="sendButton">Send</button>
+    </div>
+
+    <!-- GIF PANEL -->
+    <div id="gifPicker" class="hidden">
+      <input id="gifSearch" placeholder="Search GIFs..." />
+      <button onclick="searchGifs()">Search</button>
+      <div id="gifResults"></div>
+    </div>
+
+    <input type="file" id="imageUpload" accept="image/*" style="display:none;">
   </div>
 
-  <div id="replyBar" style="display:none;">
-    <span id="replyText"></span>
-    <button type="button" onclick="clearReply()">✕</button>
-  </div>
-
-  <div id="messageRow">
-    <input id="messageInput" placeholder="Type a message...">
-    <button id="sendButton">Send</button>
-  </div>
-
-  <input type="file" id="imageUpload" accept="image/*" style="display:none;">
 </div>
 
 <script src="script.js"></script>
