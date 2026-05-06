@@ -34,10 +34,13 @@ function enterChat() {
     }
 
     if (data.type === "typing") {
-      showTyping(data);
+      // ✅ FIX: don't show your own typing
+      if (data.username !== username) {
+        showTyping(data);
+      }
     }
 
-    if (!isTabActive) {
+    if (!isTabActive && data.type === "message") {
       document.title = "(New Message) Simple Web Chat";
     }
   };
