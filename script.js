@@ -28,9 +28,12 @@ const emoticons = [
 /* ---------------- REACTION IMAGES ---------------- */
 
 const reactionImages = [
-  { id: "reactionimage1", url: "images/reaction1.png" },
-  { id: "reactionimage2", url: "images/reaction2.png" },
-  { id: "reactionimage3", url: "images/reaction3.png" }
+  { id: "befr", url: "images/befr.jpg" },
+  { id: "eagle", url: "images/eagle.jpg" },
+  { id: "gasp", url: "images/gasp.jpg" },
+  { id: "imcrine", url: "images/imcrine.jpg" },
+  { id: "reallybru", url: "images/reallybru.jpg" },
+  { id: "whyutryingnottolaugh", url: "images/whyutryingnottolaugh.jpg" }
 ];
 
 /* ---------------- INIT ---------------- */
