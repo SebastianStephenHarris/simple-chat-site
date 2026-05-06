@@ -6,9 +6,11 @@ let isTabActive = true;
 
 const GIPHY_API_KEY = "vGT7vYYyy7T9iynVwVU3AIJ4rr4V6Phg";
 
-/* ---------------- OLD SCHOOL DATA ---------------- */
+/* ---------------- EMOJIS ---------------- */
 
-const emojis = ["😀","😂","😍","😭","😎","🔥","👍","🙏","🎉","💖"];
+const emojis = [
+  "😀","😂","😍","😭","😎","🔥","👍","🙏","🎉","💖"
+];
 
 const emoticons = [
   "¯\\_(ツ)_/¯",
@@ -21,6 +23,14 @@ const emoticons = [
   "(¬_¬)",
   "(✿◠‿◠)",
   "(ノಠ益ಠ)ノ彡┻━┻"
+];
+
+/* ---------------- REACTION IMAGES ---------------- */
+
+const reactionImages = [
+  { id: "reactionimage1", url: "images/reaction1.png" },
+  { id: "reactionimage2", url: "images/reaction2.png" },
+  { id: "reactionimage3", url: "images/reaction3.png" }
 ];
 
 /* ---------------- INIT ---------------- */
@@ -51,12 +61,17 @@ function enterChat() {
   };
 }
 
-/* ---------------- SIDE PANEL (EMOJIS ALWAYS VISIBLE) ---------------- */
+/* ---------------- SIDE PANEL ---------------- */
 
 function buildSidePanel() {
   const emojiBox = document.getElementById("emojiList");
   const emoBox = document.getElementById("emoticonList");
+  const side = document.getElementById("sidePanel");
 
+  emojiBox.innerHTML = "";
+  emoBox.innerHTML = "";
+
+  /* emojis */
   emojis.forEach(e => {
     const b = document.createElement("button");
     b.textContent = e;
@@ -64,12 +79,38 @@ function buildSidePanel() {
     emojiBox.appendChild(b);
   });
 
+  /* emoticons */
   emoticons.forEach(e => {
     const b = document.createElement("button");
     b.textContent = e;
     b.onclick = () => insertText(e);
     emoBox.appendChild(b);
   });
+
+  /* reaction images section */
+  const title = document.createElement("h3");
+  title.textContent = "Reactions";
+
+  const box = document.createElement("div");
+  box.id = "reactionList";
+
+  reactionImages.forEach(r => {
+    const b = document.createElement("button");
+    b.textContent = r.id;
+
+    b.onclick = () => {
+      ws.send(JSON.stringify({
+        type: "image",
+        username,
+        image: r.url
+      }));
+    };
+
+    box.appendChild(b);
+  });
+
+  side.appendChild(title);
+  side.appendChild(box);
 }
 
 function insertText(text) {
@@ -78,7 +119,7 @@ function insertText(text) {
   input.focus();
 }
 
-/* ---------------- SEND MESSAGE ---------------- */
+/* ---------------- SEND ---------------- */
 
 document.getElementById("sendButton").onclick = send;
 
@@ -98,7 +139,7 @@ function send() {
   clearReply();
 }
 
-/* ---------------- INPUT TYPING ---------------- */
+/* ---------------- TYPING ---------------- */
 
 document.getElementById("messageInput").addEventListener("input", () => {
   ws.send(JSON.stringify({
@@ -116,7 +157,7 @@ function addMessage(d) {
   el.innerHTML = `
     <div class="bubble">
       <strong style="color:${d.color}">${d.username}</strong>
-      ${d.reply ? `<div>${d.reply}</div>` : ""}
+      ${d.reply ? `<div class="reply">${d.reply}</div>` : ""}
       <div>${d.text}</div>
     </div>
   `;
@@ -124,7 +165,7 @@ function addMessage(d) {
   document.getElementById("messages").appendChild(el);
 }
 
-/* ---------------- IMAGE ---------------- */
+/* ---------------- IMAGES ---------------- */
 
 function triggerImageUpload() {
   document.getElementById("imageUpload").click();
@@ -135,6 +176,7 @@ document.getElementById("imageUpload").onchange = e => {
   if (!file) return;
 
   const reader = new FileReader();
+
   reader.onload = () => {
     ws.send(JSON.stringify({
       type: "image",
@@ -142,6 +184,7 @@ document.getElementById("imageUpload").onchange = e => {
       image: reader.result
     }));
   };
+
   reader.readAsDataURL(file);
 };
 
@@ -188,8 +231,6 @@ async function searchGifs() {
   });
 }
 
-/* ---------------- GIF TOGGLE ---------------- */
-
 function toggleGifPicker() {
   document.getElementById("gifPicker").classList.toggle("hidden");
 }
@@ -200,7 +241,7 @@ function clearReply() {
   replyingTo = null;
 }
 
-/* ---------------- TYPING ---------------- */
+/* ---------------- TYPING DISPLAY ---------------- */
 
 let typingUsers = {};
 let typingTimers = {};
