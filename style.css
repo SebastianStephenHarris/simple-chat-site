@@ -18,7 +18,7 @@ body {
   flex-direction: column;
 }
 
-/* Inputs */
+/* Inputs (general) */
 input {
   width: 100%;
   padding: 10px;
@@ -27,6 +27,24 @@ input {
   border: none;
   outline: none;
   box-sizing: border-box;
+}
+
+/* ✅ FIX: Proper color picker styling */
+#color {
+  width: 100%;
+  height: 40px;
+  padding: 5px;
+  background: none;
+  cursor: pointer;
+}
+
+/* Optional: cleaner color picker appearance */
+#color::-webkit-color-swatch {
+  border: none;
+}
+
+#color::-webkit-color-swatch-wrapper {
+  padding: 0;
 }
 
 /* Button */
@@ -63,7 +81,6 @@ button {
   border: 2px solid;
   background: #222;
   word-wrap: break-word;
-  position: relative;
 }
 
 /* Reply preview */
