@@ -5,38 +5,44 @@
   <title>Simple Web Chat</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div id="login" class="panel">
+<!-- LOGIN -->
+<div id="login" class="loginScreen">
   <h2>Enter Username</h2>
   <input id="username" placeholder="Username" />
   <input id="color" type="color" value="#ff66ff" />
   <button onclick="enterChat()">Enter Chat</button>
 </div>
 
-<div id="chat" class="chatLayout" style="display:none;">
+<!-- CHAT -->
+<div id="chat" class="chatLayout hidden">
 
-  <!-- LEFT: emoji/emoticon panel -->
+  <!-- SIDE PANEL -->
   <div id="sidePanel">
     <h3>Emoji</h3>
     <div id="emojiList"></div>
 
     <h3>Emoticons</h3>
     <div id="emoticonList"></div>
+
+    <h3>Reactions</h3>
+    <div id="reactionList"></div>
   </div>
 
-  <!-- RIGHT: chat area -->
+  <!-- MAIN CHAT -->
   <div id="chatMain">
 
     <div id="messages"></div>
     <div id="typing"></div>
 
-    <div id="replyBar" style="display:none;">
+    <div id="replyBar" class="hidden">
       <span id="replyText"></span>
       <button onclick="clearReply()">✕</button>
     </div>
 
-    <!-- INPUT BAR (DISCORD STYLE) -->
+    <!-- INPUT BAR -->
     <div id="inputBar">
 
       <button class="iconBtn" onclick="triggerImageUpload()">📷</button>
@@ -54,9 +60,9 @@
       <div id="gifResults"></div>
     </div>
 
-    <input type="file" id="imageUpload" accept="image/*" style="display:none;">
-  </div>
+    <input type="file" id="imageUpload" accept="image/*" class="hidden">
 
+  </div>
 </div>
 
 <script src="script.js"></script>
