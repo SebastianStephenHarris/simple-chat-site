@@ -7,17 +7,46 @@
 </head>
 <body>
 
-<div id="login">
+<div id="login" class="panel">
   <h2>Enter Username</h2>
   <input id="username" placeholder="Username" />
   <input id="color" type="color" value="#0066ff" />
   <button onclick="enterChat()">Enter Chat</button>
 </div>
 
-<div id="chat" style="display:none;">
+<div id="chat" class="panel" style="display:none;">
   <h2>Chat</h2>
+
   <div id="messages"></div>
-  <input id="messageInput" placeholder="Type a message and press Enter">
+  <div id="typing"></div>
+
+  <div id="toolbar">
+    <button type="button" onclick="toggleEmojiPicker()">😊</button>
+    <button type="button" onclick="triggerImageUpload()">📷</button>
+    <button type="button" onclick="toggleGifPicker()">GIF</button>
+  </div>
+
+  <div id="emojiPicker" class="picker" style="display:none;"></div>
+
+  <div id="gifPicker" class="picker" style="display:none;">
+    <div class="gif-search-row">
+      <input id="gifSearch" placeholder="Search GIFs..." />
+      <button type="button" onclick="searchGifs()">Search</button>
+    </div>
+    <div id="gifResults"></div>
+  </div>
+
+  <div id="replyBar" style="display:none;">
+    <span id="replyText"></span>
+    <button type="button" onclick="clearReply()">✕</button>
+  </div>
+
+  <div id="messageRow">
+    <input id="messageInput" placeholder="Type a message and press Enter">
+    <button type="button" id="sendButton">Send</button>
+  </div>
+
+  <input type="file" id="imageUpload" accept="image/*" style="display:none;">
 </div>
 
 <script src="script.js"></script>
