@@ -4,12 +4,11 @@ let userColor;
 let replyingTo = null;
 let isTabActive = true;
 
-const GIPHY_API_KEY = "vGT7vYYyy7T9iynVwVU3AIJ4rr4V6Phg";
+const GIPHY_API_KEY = "YOUR_GIPHY_API_KEY";
 
-/* ---------------- REAL OLD-SCHOOL EMOTICONS ---------------- */
-const emojis = [
-  "😀","😂","😍","😭","😎","🔥","👍","🙏","🎉","💖"
-];
+/* ---------------- OLD SCHOOL DATA ---------------- */
+
+const emojis = ["😀","😂","😍","😭","😎","🔥","👍","🙏","🎉","💖"];
 
 const emoticons = [
   "¯\\_(ツ)_/¯",
@@ -17,29 +16,14 @@ const emoticons = [
   "┬─┬ ノ( ゜-゜ノ)",
   "( ͡° ͜ʖ ͡°)",
   "(•_•)",
-  "(•_•)>⌐■-■",
   "(⌐■_■)",
   "(ಥ﹏ಥ)",
-  "(ʘ‿ʘ)",
-  "(ง'̀-'́)ง",
-  "(╥﹏╥)",
   "(¬_¬)",
   "(✿◠‿◠)",
-  "(◕‿◕)",
-  "(☞ﾟヮﾟ)☞",
-  "☜(ﾟヮﾟ☜)",
-  "(ノಠ益ಠ)ノ彡┻━┻",
-  "(づ｡◕‿‿◕｡)づ"
+  "(ノಠ益ಠ)ノ彡┻━┻"
 ];
 
-/* ---------------- TAB NOTIFICATIONS ---------------- */
-
-document.addEventListener("visibilitychange", () => {
-  isTabActive = !document.hidden;
-  if (isTabActive) document.title = "Simple Web Chat";
-});
-
-/* ---------------- ENTER CHAT ---------------- */
+/* ---------------- INIT ---------------- */
 
 function enterChat() {
   username = document.getElementById("username").value.trim();
@@ -48,29 +32,18 @@ function enterChat() {
   if (!username) return alert("Enter username");
 
   document.getElementById("login").style.display = "none";
-  document.getElementById("chat").style.display = "block";
+  document.getElementById("chat").style.display = "flex";
 
-  buildEmojiPopup();
+  buildSidePanel();
 
   ws = new WebSocket("wss://simple-chat-backend-1rop.onrender.com");
 
-  ws.onmessage = event => {
-    const data = JSON.parse(event.data);
+  ws.onmessage = e => {
+    const data = JSON.parse(e.data);
 
-    if (data.type === "message") {
-      addMessage(data);
-      notify(data);
-    }
-
-    if (data.type === "image") {
-      addImage(data);
-      notify(data);
-    }
-
-    if (data.type === "gif") {
-      addGif(data);
-      notify(data);
-    }
+    if (data.type === "message") addMessage(data);
+    if (data.type === "image") addImage(data);
+    if (data.type === "gif") addGif(data);
 
     if (data.type === "typing" && data.username !== username) {
       showTyping(data.username);
@@ -78,25 +51,46 @@ function enterChat() {
   };
 }
 
+/* ---------------- SIDE PANEL (EMOJIS ALWAYS VISIBLE) ---------------- */
+
+function buildSidePanel() {
+  const emojiBox = document.getElementById("emojiList");
+  const emoBox = document.getElementById("emoticonList");
+
+  emojis.forEach(e => {
+    const b = document.createElement("button");
+    b.textContent = e;
+    b.onclick = () => insertText(e);
+    emojiBox.appendChild(b);
+  });
+
+  emoticons.forEach(e => {
+    const b = document.createElement("button");
+    b.textContent = e;
+    b.onclick = () => insertText(e);
+    emoBox.appendChild(b);
+  });
+}
+
+function insertText(text) {
+  const input = document.getElementById("messageInput");
+  input.value += text;
+  input.focus();
+}
+
 /* ---------------- SEND MESSAGE ---------------- */
 
-document.getElementById("messageInput").addEventListener("keydown", e => {
-  if (e.key === "Enter") sendMessage();
-});
+document.getElementById("sendButton").onclick = send;
 
-document.getElementById("sendButton").onclick = sendMessage;
-
-function sendMessage() {
+function send() {
   const input = document.getElementById("messageInput");
-  const text = input.value.trim();
-
-  if (!text) return;
+  if (!input.value.trim()) return;
 
   ws.send(JSON.stringify({
     type: "message",
     username,
     color: userColor,
-    text,
+    text: input.value,
     reply: replyingTo
   }));
 
@@ -104,70 +98,33 @@ function sendMessage() {
   clearReply();
 }
 
-/* ---------------- TYPING (FIXED, NO SPAM) ---------------- */
-
-let typingTimeout;
+/* ---------------- INPUT TYPING ---------------- */
 
 document.getElementById("messageInput").addEventListener("input", () => {
-  if (!ws) return;
-
   ws.send(JSON.stringify({
     type: "typing",
     username
   }));
-
-  clearTimeout(typingTimeout);
-  typingTimeout = setTimeout(() => {}, 2000);
 });
-
-let typingUsers = {};
-let typingTimers = {};
-
-function showTyping(user) {
-  typingUsers[user] = true;
-
-  clearTimeout(typingTimers[user]);
-  typingTimers[user] = setTimeout(() => {
-    delete typingUsers[user];
-    updateTyping();
-  }, 2000);
-
-  updateTyping();
-}
-
-function updateTyping() {
-  const div = document.getElementById("typing");
-  const users = Object.keys(typingUsers);
-
-  if (users.length === 0) {
-    div.textContent = "";
-  } else if (users.length === 1) {
-    div.textContent = `${users[0]} is typing...`;
-  } else {
-    div.textContent = `${users.join(", ")} are typing...`;
-  }
-}
 
 /* ---------------- MESSAGES ---------------- */
 
-function addMessage(data) {
+function addMessage(d) {
   const el = document.createElement("div");
-  el.className = "message " + (data.username === username ? "mine" : "theirs");
+  el.className = "message " + (d.username === username ? "mine" : "theirs");
 
   el.innerHTML = `
     <div class="bubble">
-      <strong style="color:${data.color}">${data.username}</strong>
-      ${data.reply ? `<div class="reply">Reply: ${data.reply}</div>` : ""}
-      <div>${data.text}</div>
-      <button onclick="setReply('${data.text}')">Reply</button>
+      <strong style="color:${d.color}">${d.username}</strong>
+      ${d.reply ? `<div>${d.reply}</div>` : ""}
+      <div>${d.text}</div>
     </div>
   `;
 
   document.getElementById("messages").appendChild(el);
-  scrollDown();
 }
 
-/* ---------------- IMAGES ---------------- */
+/* ---------------- IMAGE ---------------- */
 
 function triggerImageUpload() {
   document.getElementById("imageUpload").click();
@@ -178,93 +135,31 @@ document.getElementById("imageUpload").onchange = e => {
   if (!file) return;
 
   const reader = new FileReader();
-
   reader.onload = () => {
     ws.send(JSON.stringify({
       type: "image",
       username,
-      color: userColor,
-      image: reader.result,
-      reply: replyingTo
+      image: reader.result
     }));
   };
-
   reader.readAsDataURL(file);
 };
 
-function addImage(data) {
+function addImage(d) {
   const el = document.createElement("div");
-  el.className = "message " + (data.username === username ? "mine" : "theirs");
+  el.className = "message " + (d.username === username ? "mine" : "theirs");
 
   el.innerHTML = `
     <div class="bubble">
-      <strong>${data.username}</strong>
-      <img class="chatImage" src="${data.image}">
-      <button onclick="setReply('[image]')">Reply</button>
+      <strong>${d.username}</strong>
+      <img class="chatImage" src="${d.image}">
     </div>
   `;
 
   document.getElementById("messages").appendChild(el);
-  scrollDown();
 }
 
-/* ---------------- GIFS ---------------- */
-
-function addGif(data) {
-  const el = document.createElement("div");
-  el.className = "message " + (data.username === username ? "mine" : "theirs");
-
-  el.innerHTML = `
-    <div class="bubble">
-      <strong>${data.username}</strong>
-      <img class="gifThumb" src="${data.gif}">
-      <button onclick="setReply('[gif]')">Reply</button>
-    </div>
-  `;
-
-  document.getElementById("messages").appendChild(el);
-  scrollDown();
-}
-
-/* ---------------- REPLY ---------------- */
-
-function setReply(text) {
-  replyingTo = text;
-  document.getElementById("replyBar").style.display = "flex";
-  document.getElementById("replyText").textContent = "Replying to: " + text;
-}
-
-function clearReply() {
-  replyingTo = null;
-  document.getElementById("replyBar").style.display = "none";
-}
-
-/* ---------------- EMOJI POPUP ---------------- */
-
-function buildEmojiPopup() {
-  const popup = document.getElementById("emojiPopup");
-  if (popup.dataset.built) return;
-
-  [...emojis, ...emoticons].forEach(e => {
-    const btn = document.createElement("button");
-    btn.textContent = e;
-
-    btn.onclick = () => {
-      document.getElementById("messageInput").value += e;
-      popup.classList.add("hidden");
-    };
-
-    popup.appendChild(btn);
-  });
-
-  popup.dataset.built = "true";
-}
-
-function toggleEmojiPopup() {
-  document.getElementById("emojiPopup").classList.toggle("hidden");
-}
-
-/* ---------------- GIF API ---------------- */
+/* ---------------- GIF ---------------- */
 
 async function searchGifs() {
   const res = await fetch(
@@ -293,19 +188,43 @@ async function searchGifs() {
   });
 }
 
+/* ---------------- GIF TOGGLE ---------------- */
+
 function toggleGifPicker() {
   document.getElementById("gifPicker").classList.toggle("hidden");
 }
 
-/* ---------------- UTIL ---------------- */
+/* ---------------- REPLY ---------------- */
 
-function scrollDown() {
-  const m = document.getElementById("messages");
-  m.scrollTop = m.scrollHeight;
+function clearReply() {
+  replyingTo = null;
 }
 
-function notify(data) {
-  if (!isTabActive && data.username !== username) {
-    document.title = "(New Message) Simple Web Chat";
-  }
+/* ---------------- TYPING ---------------- */
+
+let typingUsers = {};
+let typingTimers = {};
+
+function showTyping(user) {
+  typingUsers[user] = true;
+
+  clearTimeout(typingTimers[user]);
+  typingTimers[user] = setTimeout(() => {
+    delete typingUsers[user];
+    updateTyping();
+  }, 2000);
+
+  updateTyping();
+}
+
+function updateTyping() {
+  const div = document.getElementById("typing");
+  const users = Object.keys(typingUsers);
+
+  div.textContent =
+    users.length === 0
+      ? ""
+      : users.length === 1
+      ? `${users[0]} is typing...`
+      : `${users.join(", ")} are typing...`;
 }
