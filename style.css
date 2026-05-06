@@ -1,29 +1,32 @@
-body {
-  background: #1d1f21;
-  color: white;
-  font-family: Arial, sans-serif;
-  padding: 20px;
+.message {
+  display: flex;
+  margin: 5px 0;
 }
-#messages {
-  border: 1px solid #444;
-  height: 300px;
-  overflow-y: auto;
-  margin-bottom: 10px;
+
+.mine {
+  justify-content: flex-end;
+}
+
+.theirs {
+  justify-content: flex-start;
+}
+
+.bubble {
+  max-width: 60%;
   padding: 10px;
-  background: #111;
+  border-radius: 10px;
+  border: 2px solid;
+  background: #222;
 }
-input {
-  width: 100%;
-  padding: 10px;
-  color: white;
-  background: #333;
-  border: none;
+
+.reply {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-bottom: 5px;
 }
+
 button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  background: #0066ff;
-  color: white;
-  border: none;
+  margin-top: 5px;
+  font-size: 10px;
+  cursor: pointer;
 }
