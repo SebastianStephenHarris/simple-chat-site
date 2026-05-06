@@ -154,14 +154,20 @@ function addMessage(d) {
   const el = document.createElement("div");
   el.className = "message " + (d.username === username ? "mine" : "theirs");
 
-  el.innerHTML = `
-    <div class="bubble">
-      <strong style="color:${d.color}">${d.username}</strong>
-      ${d.reply ? `<div class="reply">${d.reply}</div>` : ""}
-      <div>${d.text}</div>
-    </div>
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  
+  bubble.innerHTML = `
+    <strong style="color:${d.color}">${d.username}</strong>
+    ${d.reply ? `<div class="reply">${d.reply}</div>` : ""}
+    <div>${d.text}</div>
   `;
 
+  // Add click handler to reply to this message
+  bubble.onclick = () => setReply(d.username, d.text);
+  bubble.style.cursor = "pointer";
+
+  el.appendChild(bubble);
   document.getElementById("messages").appendChild(el);
   scrollToBottom();
 }
@@ -193,13 +199,19 @@ function addImage(d) {
   const el = document.createElement("div");
   el.className = "message " + (d.username === username ? "mine" : "theirs");
 
-  el.innerHTML = `
-    <div class="bubble">
-      <strong>${d.username}</strong>
-      <img class="chatImage" src="${d.image}">
-    </div>
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  
+  bubble.innerHTML = `
+    <strong>${d.username}</strong>
+    <img class="chatImage" src="${d.image}">
   `;
 
+  // Add click handler to reply to this image
+  bubble.onclick = () => setReply(d.username, "[Image]");
+  bubble.style.cursor = "pointer";
+
+  el.appendChild(bubble);
   document.getElementById("messages").appendChild(el);
   scrollToBottom();
 }
@@ -265,18 +277,37 @@ function addGif(d) {
   const el = document.createElement("div");
   el.className = "message " + (d.username === username ? "mine" : "theirs");
 
-  el.innerHTML = `
-    <div class="bubble">
-      <strong>${d.username}</strong>
-      <img class="chatImage" src="${d.gif}" style="width: 200px; height: auto;">
-    </div>
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  
+  bubble.innerHTML = `
+    <strong>${d.username}</strong>
+    <img class="chatImage" src="${d.gif}" style="width: 200px; height: auto;">
   `;
 
+  // Add click handler to reply to this GIF
+  bubble.onclick = () => setReply(d.username, "[GIF]");
+  bubble.style.cursor = "pointer";
+
+  el.appendChild(bubble);
   document.getElementById("messages").appendChild(el);
   scrollToBottom();
 }
 
 /* ---------------- REPLY ---------------- */
+
+function setReply(user, text) {
+  replyingTo = `${user}: ${text.substring(0, 50)}${text.length > 50 ? '...' : ''}`;
+  
+  const replyBar = document.getElementById("replyBar");
+  const replyText = document.getElementById("replyText");
+  
+  replyText.textContent = `Replying to ${replyingTo}`;
+  replyBar.classList.remove("hidden");
+  
+  // Focus on message input
+  document.getElementById("messageInput").focus();
+}
 
 function clearReply() {
   replyingTo = null;
