@@ -2,11 +2,10 @@ let ws;
 let username;
 let userColor;
 let replyingTo = null;
-let isTabActive = true;
 
 const GIPHY_API_KEY = "vGT7vYYyy7T9iynVwVU3AIJ4rr4V6Phg";
 
-/* ---------------- EMOJIS ---------------- */
+/* ---------------- DATA ---------------- */
 
 const emojis = [
   "😀","😂","😍","😭","😎","🔥","👍","🙏","🎉","💖"
@@ -25,18 +24,13 @@ const emoticons = [
   "(ノಠ益ಠ)ノ彡┻━┻"
 ];
 
-/* ---------------- REACTION IMAGES ---------------- */
-
 const reactionImages = [
-  { id: "befr", url: "images/befr.jpg" },
-  { id: "eagle", url: "images/eagle.jpg" },
-  { id: "gasp", url: "images/gasp.jpg" },
-  { id: "imcrine", url: "images/imcrine.jpg" },
-  { id: "reallybru", url: "images/reallybru.jpg" },
-  { id: "whyutryingnottolaugh", url: "images/whyutryingnottolaugh.jpg" }
+  { id: "reactionimage1", url: "images/reaction1.png" },
+  { id: "reactionimage2", url: "images/reaction2.png" },
+  { id: "reactionimage3", url: "images/reaction3.png" }
 ];
 
-/* ---------------- INIT ---------------- */
+/* ---------------- LOGIN ---------------- */
 
 function enterChat() {
   username = document.getElementById("username").value.trim();
@@ -44,8 +38,8 @@ function enterChat() {
 
   if (!username) return alert("Enter username");
 
-  document.getElementById("login").style.display = "none";
-  document.getElementById("chat").style.display = "flex";
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("chat").classList.remove("hidden");
 
   buildSidePanel();
 
@@ -57,10 +51,6 @@ function enterChat() {
     if (data.type === "message") addMessage(data);
     if (data.type === "image") addImage(data);
     if (data.type === "gif") addGif(data);
-
-    if (data.type === "typing" && data.username !== username) {
-      showTyping(data.username);
-    }
   };
 }
 
@@ -69,12 +59,12 @@ function enterChat() {
 function buildSidePanel() {
   const emojiBox = document.getElementById("emojiList");
   const emoBox = document.getElementById("emoticonList");
-  const side = document.getElementById("sidePanel");
+  const reactionBox = document.getElementById("reactionList");
 
   emojiBox.innerHTML = "";
   emoBox.innerHTML = "";
+  reactionBox.innerHTML = "";
 
-  /* emojis */
   emojis.forEach(e => {
     const b = document.createElement("button");
     b.textContent = e;
@@ -82,20 +72,12 @@ function buildSidePanel() {
     emojiBox.appendChild(b);
   });
 
-  /* emoticons */
   emoticons.forEach(e => {
     const b = document.createElement("button");
     b.textContent = e;
     b.onclick = () => insertText(e);
     emoBox.appendChild(b);
   });
-
-  /* reaction images section */
-  const title = document.createElement("h3");
-  title.textContent = "Reactions";
-
-  const box = document.createElement("div");
-  box.id = "reactionList";
 
   reactionImages.forEach(r => {
     const b = document.createElement("button");
@@ -109,11 +91,8 @@ function buildSidePanel() {
       }));
     };
 
-    box.appendChild(b);
+    reactionBox.appendChild(b);
   });
-
-  side.appendChild(title);
-  side.appendChild(box);
 }
 
 function insertText(text) {
@@ -122,11 +101,15 @@ function insertText(text) {
   input.focus();
 }
 
-/* ---------------- SEND ---------------- */
+/* ---------------- SEND MESSAGE ---------------- */
 
-document.getElementById("sendButton").onclick = send;
+document.getElementById("sendButton").onclick = sendMessage;
 
-function send() {
+document.getElementById("messageInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") sendMessage();
+});
+
+function sendMessage() {
   const input = document.getElementById("messageInput");
   if (!input.value.trim()) return;
 
@@ -141,15 +124,6 @@ function send() {
   input.value = "";
   clearReply();
 }
-
-/* ---------------- TYPING ---------------- */
-
-document.getElementById("messageInput").addEventListener("input", () => {
-  ws.send(JSON.stringify({
-    type: "typing",
-    username
-  }));
-});
 
 /* ---------------- MESSAGES ---------------- */
 
@@ -168,7 +142,7 @@ function addMessage(d) {
   document.getElementById("messages").appendChild(el);
 }
 
-/* ---------------- IMAGES ---------------- */
+/* ---------------- IMAGE UPLOAD ---------------- */
 
 function triggerImageUpload() {
   document.getElementById("imageUpload").click();
@@ -205,16 +179,19 @@ function addImage(d) {
   document.getElementById("messages").appendChild(el);
 }
 
-/* ---------------- GIF ---------------- */
+/* ---------------- GIF (FIXED) ---------------- */
 
 async function searchGifs() {
-  const res = await fetch(
-    `https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_API_KEY}&limit=9`
-  );
+  const query = document.getElementById("gifSearch").value.trim();
 
+  const url = query
+    ? `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(query)}&limit=9`
+    : `https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_API_KEY}&limit=9`;
+
+  const res = await fetch(url);
   const json = await res.json();
-  const box = document.getElementById("gifResults");
 
+  const box = document.getElementById("gifResults");
   box.innerHTML = "";
 
   json.data.forEach(gif => {
@@ -228,6 +205,8 @@ async function searchGifs() {
         username,
         gif: gif.images.fixed_height.url
       }));
+
+      document.getElementById("gifPicker").classList.add("hidden");
     };
 
     box.appendChild(img);
@@ -235,40 +214,16 @@ async function searchGifs() {
 }
 
 function toggleGifPicker() {
-  document.getElementById("gifPicker").classList.toggle("hidden");
+  const el = document.getElementById("gifPicker");
+  el.classList.toggle("hidden");
+
+  if (!el.classList.contains("hidden")) {
+    searchGifs();
+  }
 }
 
 /* ---------------- REPLY ---------------- */
 
 function clearReply() {
   replyingTo = null;
-}
-
-/* ---------------- TYPING DISPLAY ---------------- */
-
-let typingUsers = {};
-let typingTimers = {};
-
-function showTyping(user) {
-  typingUsers[user] = true;
-
-  clearTimeout(typingTimers[user]);
-  typingTimers[user] = setTimeout(() => {
-    delete typingUsers[user];
-    updateTyping();
-  }, 2000);
-
-  updateTyping();
-}
-
-function updateTyping() {
-  const div = document.getElementById("typing");
-  const users = Object.keys(typingUsers);
-
-  div.textContent =
-    users.length === 0
-      ? ""
-      : users.length === 1
-      ? `${users[0]} is typing...`
-      : `${users.join(", ")} are typing...`;
 }
