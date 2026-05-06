@@ -1,17 +1,37 @@
 body {
   margin: 0;
-  font-family: Verdana;
+  font-family: Verdana, sans-serif;
   background: linear-gradient(135deg, #0a0015, #1a0033);
   color: white;
 }
 
-/* layout */
+/* ---------------- LOGIN ---------------- */
+
+#login {
+  width: 100%;
+  max-width: 400px;
+  margin: 100px auto;
+  text-align: center;
+}
+
+#login input {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  background: #120022;
+  border: 2px solid #ff66ff;
+  color: white;
+}
+
+/* ---------------- MAIN LAYOUT ---------------- */
+
 .chatLayout {
   display: flex;
   height: 100vh;
 }
 
-/* SIDE PANEL (emoji/emoticons always visible) */
+/* ---------------- SIDE PANEL ---------------- */
+
 #sidePanel {
   width: 220px;
   background: #0a0015;
@@ -21,34 +41,38 @@ body {
 }
 
 #sidePanel h3 {
-  margin: 10px 0;
-  font-size: 14px;
+  margin: 10px 0 5px;
+  font-size: 13px;
   color: #ff99ff;
 }
 
-#emojiList, #emoticonList {
+#emojiList,
+#emoticonList,
+#reactionList {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  margin-bottom: 10px;
 }
 
 #sidePanel button {
   background: #120022;
   border: 1px solid #ff66ff;
   color: white;
+  font-size: 12px;
   padding: 4px;
   cursor: pointer;
-  font-size: 14px;
 }
 
-/* CHAT MAIN */
+/* ---------------- CHAT AREA ---------------- */
+
 #chatMain {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-/* messages */
+/* messages container */
 #messages {
   flex: 1;
   padding: 12px;
@@ -65,9 +89,11 @@ body {
   padding-left: 10px;
   font-size: 12px;
   opacity: 0.8;
+  color: #ffccff;
 }
 
-/* bubbles */
+/* ---------------- MESSAGE BUBBLES ---------------- */
+
 .message {
   display: flex;
 }
@@ -89,16 +115,17 @@ body {
   word-break: break-word;
 }
 
-/* reply bar */
-#replyBar {
-  background: #120022;
-  border-top: 2px solid #ff66ff;
-  padding: 6px;
-  display: flex;
-  justify-content: space-between;
+/* reply text inside message */
+.reply {
+  font-size: 11px;
+  opacity: 0.8;
+  border-left: 3px solid #ff00ff;
+  padding-left: 6px;
+  margin-bottom: 5px;
 }
 
-/* INPUT BAR (DISCORD STYLE) */
+/* ---------------- INPUT BAR (DISCORD STYLE) ---------------- */
+
 #inputBar {
   display: flex;
   gap: 6px;
@@ -114,17 +141,40 @@ body {
   background: #120022;
   border: 2px solid #ff66ff;
   color: white;
+  outline: none;
 }
 
-/* icons inside bar */
+/* icons inside input bar */
 .iconBtn {
   background: #120022;
   border: 1px solid #ff66ff;
   padding: 8px;
   cursor: pointer;
+  color: white;
 }
 
-/* images FIXED SIZE */
+/* send button */
+#sendButton {
+  background: linear-gradient(#ff00ff, #6600ff);
+  border: 2px outset #ff99ff;
+  color: white;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+/* ---------------- REPLY BAR ---------------- */
+
+#replyBar {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px;
+  background: #120022;
+  border-top: 2px solid #ff66ff;
+  font-size: 12px;
+}
+
+/* ---------------- IMAGES ---------------- */
+
 .chatImage,
 .gifThumb {
   width: 140px;
@@ -132,21 +182,46 @@ body {
   object-fit: cover;
   border-radius: 6px;
   border: 2px solid #ff66ff;
+  margin-top: 5px;
 }
 
-/* GIF panel */
+/* ---------------- GIF PANEL ---------------- */
+
 #gifPicker {
   background: #0a0015;
   border: 2px solid #ff66ff;
   padding: 10px;
 }
 
+#gifPicker input {
+  width: 100%;
+  padding: 8px;
+  background: #120022;
+  border: 2px solid #ff66ff;
+  color: white;
+  margin-bottom: 6px;
+}
+
 #gifResults {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 6px;
+  max-height: 250px;
+  overflow-y: auto;
 }
+
+/* ---------------- UTIL ---------------- */
 
 .hidden {
   display: none;
+}
+
+/* scroll bar (nice Y2K touch) */
+#messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+#messages::-webkit-scrollbar-thumb {
+  background: #ff00ff;
+  border-radius: 10px;
 }
