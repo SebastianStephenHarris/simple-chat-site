@@ -4,7 +4,7 @@ let userColor;
 let replyingTo = null;
 let isTabActive = true;
 
-const GIPHY_API_KEY = "YOUR_GIPHY_API_KEY";
+const GIPHY_API_KEY = "vGT7vYYyy7T9iynVwVU3AIJ4rr4V6Phg";
 
 /* ---------------- OLD SCHOOL DATA ---------------- */
 
