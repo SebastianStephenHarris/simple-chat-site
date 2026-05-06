@@ -42,6 +42,7 @@ function enterChat() {
   document.getElementById("chat").classList.remove("hidden");
 
   buildSidePanel();
+  setupEventListeners();
 
   ws = new WebSocket("wss://simple-chat-backend-1rop.onrender.com");
 
@@ -52,6 +53,31 @@ function enterChat() {
     if (data.type === "image") addImage(data);
     if (data.type === "gif") addGif(data);
   };
+}
+
+/* ---------------- EVENT LISTENERS ---------------- */
+
+function setupEventListeners() {
+  // Message input - Enter to send
+  const messageInput = document.getElementById("messageInput");
+  messageInput.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent any default behavior
+      sendMessage();
+    }
+  });
+
+  // GIF search - Enter to search
+  const gifSearch = document.getElementById("gifSearch");
+  gifSearch.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      searchGifs();
+    }
+  });
+
+  // Send button click
+  document.getElementById("sendButton").onclick = sendMessage;
 }
 
 /* ---------------- SIDE PANEL ---------------- */
@@ -103,12 +129,6 @@ function insertText(text) {
 
 /* ---------------- SEND MESSAGE ---------------- */
 
-document.getElementById("sendButton").onclick = sendMessage;
-
-document.getElementById("messageInput").addEventListener("keydown", e => {
-  if (e.key === "Enter") sendMessage();
-});
-
 function sendMessage() {
   const input = document.getElementById("messageInput");
   if (!input.value.trim()) return;
@@ -140,6 +160,7 @@ function addMessage(d) {
   `;
 
   document.getElementById("messages").appendChild(el);
+  scrollToBottom();
 }
 
 /* ---------------- IMAGE UPLOAD ---------------- */
@@ -177,6 +198,7 @@ function addImage(d) {
   `;
 
   document.getElementById("messages").appendChild(el);
+  scrollToBottom();
 }
 
 /* ---------------- GIF (FIXED) ---------------- */
@@ -188,29 +210,41 @@ async function searchGifs() {
     ? `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(query)}&limit=9`
     : `https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_API_KEY}&limit=9`;
 
-  const res = await fetch(url);
-  const json = await res.json();
+  try {
+    const res = await fetch(url);
+    const json = await res.json();
 
-  const box = document.getElementById("gifResults");
-  box.innerHTML = "";
+    const box = document.getElementById("gifResults");
+    box.innerHTML = "";
 
-  json.data.forEach(gif => {
-    const img = document.createElement("img");
-    img.src = gif.images.fixed_height_small.url;
-    img.className = "gifThumb";
+    if (!json.data || json.data.length === 0) {
+      box.innerHTML = "<p style='color: #ff99ff; padding: 10px;'>No GIFs found</p>";
+      return;
+    }
 
-    img.onclick = () => {
-      ws.send(JSON.stringify({
-        type: "gif",
-        username,
-        gif: gif.images.fixed_height.url
-      }));
+    json.data.forEach(gif => {
+      const img = document.createElement("img");
+      img.src = gif.images.fixed_height_small.url;
+      img.className = "gifThumb";
 
-      document.getElementById("gifPicker").classList.add("hidden");
-    };
+      img.onclick = () => {
+        ws.send(JSON.stringify({
+          type: "gif",
+          username,
+          gif: gif.images.fixed_height.url
+        }));
 
-    box.appendChild(img);
-  });
+        document.getElementById("gifPicker").classList.add("hidden");
+        document.getElementById("gifSearch").value = ""; // Clear search
+      };
+
+      box.appendChild(img);
+    });
+  } catch (error) {
+    console.error("Error fetching GIFs:", error);
+    const box = document.getElementById("gifResults");
+    box.innerHTML = "<p style='color: #ff99ff; padding: 10px;'>Error loading GIFs</p>";
+  }
 }
 
 function toggleGifPicker() {
@@ -218,12 +252,40 @@ function toggleGifPicker() {
   el.classList.toggle("hidden");
 
   if (!el.classList.contains("hidden")) {
+    // Load trending GIFs when opening
+    document.getElementById("gifSearch").value = "";
     searchGifs();
   }
+}
+
+function addGif(d) {
+  const el = document.createElement("div");
+  el.className = "message " + (d.username === username ? "mine" : "theirs");
+
+  el.innerHTML = `
+    <div class="bubble">
+      <strong>${d.username}</strong>
+      <img class="chatImage" src="${d.gif}" style="width: 200px; height: auto;">
+    </div>
+  `;
+
+  document.getElementById("messages").appendChild(el);
+  scrollToBottom();
 }
 
 /* ---------------- REPLY ---------------- */
 
 function clearReply() {
   replyingTo = null;
+  const replyBar = document.getElementById("replyBar");
+  if (replyBar) {
+    replyBar.classList.add("hidden");
+  }
+}
+
+/* ---------------- UTILITY ---------------- */
+
+function scrollToBottom() {
+  const messages = document.getElementById("messages");
+  messages.scrollTop = messages.scrollHeight;
 }
