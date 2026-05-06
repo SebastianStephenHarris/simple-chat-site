@@ -4,9 +4,7 @@ body {
   background: linear-gradient(135deg, #0a0015, #1a0033);
   color: white;
 }
-
 /* ---------------- LOGIN ---------------- */
-
 .loginScreen {
   height: 100vh;
   display: flex;
@@ -14,7 +12,6 @@ body {
   justify-content: center;
   align-items: center;
 }
-
 .loginScreen input {
   width: 260px;
   margin: 5px 0;
@@ -23,7 +20,6 @@ body {
   border: 2px solid #ff66ff;
   color: white;
 }
-
 .loginScreen button {
   width: 260px;
   padding: 10px;
@@ -31,16 +27,12 @@ body {
   border: 2px solid #ff99ff;
   color: white;
 }
-
 /* ---------------- LAYOUT ---------------- */
-
 .chatLayout {
   display: flex;
   height: 100vh;
 }
-
 /* ---------------- SIDE PANEL ---------------- */
-
 #sidePanel {
   width: 220px;
   background: #0a0015;
@@ -48,13 +40,11 @@ body {
   padding: 10px;
   overflow-y: auto;
 }
-
 #sidePanel h3 {
   font-size: 13px;
   color: #ff99ff;
   margin: 10px 0 5px;
 }
-
 #emojiList,
 #emoticonList,
 #reactionList {
@@ -62,7 +52,6 @@ body {
   flex-wrap: wrap;
   gap: 5px;
 }
-
 #sidePanel button {
   background: #120022;
   border: 1px solid #ff66ff;
@@ -70,15 +59,12 @@ body {
   font-size: 12px;
   padding: 4px;
 }
-
 /* ---------------- CHAT ---------------- */
-
 #chatMain {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
-
 #messages {
   flex: 1;
   overflow-y: auto;
@@ -88,28 +74,22 @@ body {
   flex-direction: column;
   gap: 10px;
 }
-
 #typing {
   min-height: 20px;
   padding-left: 10px;
   font-size: 12px;
   opacity: 0.8;
 }
-
 /* ---------------- BUBBLES ---------------- */
-
 .message {
   display: flex;
 }
-
 .mine {
   justify-content: flex-end;
 }
-
 .theirs {
   justify-content: flex-start;
 }
-
 .bubble {
   max-width: 60%;
   padding: 10px;
@@ -118,9 +98,43 @@ body {
   border-radius: 10px;
   word-break: break-word;
 }
-
+.bubble:hover {
+  background: #1a0033;
+  border-color: #ff99ff;
+}
+.reply {
+  background: #0a0015;
+  border-left: 3px solid #ff66ff;
+  padding: 5px 8px;
+  margin: 5px 0;
+  font-size: 12px;
+  opacity: 0.8;
+  font-style: italic;
+}
+/* ---------------- REPLY BAR ---------------- */
+#replyBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: #120022;
+  border-top: 2px solid #ff66ff;
+  border-bottom: 2px solid #ff66ff;
+  font-size: 13px;
+  color: #ff99ff;
+}
+#replyBar button {
+  background: transparent;
+  border: none;
+  color: #ff99ff;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 5px;
+}
+#replyBar button:hover {
+  color: #ff66ff;
+}
 /* ---------------- INPUT BAR ---------------- */
-
 #inputBar {
   display: flex;
   gap: 6px;
@@ -128,7 +142,6 @@ body {
   background: #0a0015;
   border-top: 2px solid #ff66ff;
 }
-
 #messageInput {
   flex: 1;
   padding: 10px;
@@ -136,28 +149,31 @@ body {
   border: 2px solid #ff66ff;
   color: white;
 }
-
 .iconBtn {
   background: #120022;
   border: 1px solid #ff66ff;
   padding: 8px;
   color: white;
+  cursor: pointer;
 }
-
+.iconBtn:hover {
+  background: #1a0033;
+}
 #sendButton {
   background: linear-gradient(#ff00ff, #6600ff);
   border: 2px solid #ff99ff;
   color: white;
+  cursor: pointer;
 }
-
+#sendButton:hover {
+  background: linear-gradient(#ff33ff, #7700ff);
+}
 /* ---------------- GIF ---------------- */
-
 #gifPicker {
   background: #0a0015;
   border: 2px solid #ff66ff;
   padding: 10px;
 }
-
 #gifSearch {
   width: 100%;
   padding: 8px;
@@ -166,7 +182,6 @@ body {
   color: white;
   margin-bottom: 6px;
 }
-
 #gifResults {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -174,24 +189,23 @@ body {
   max-height: 250px;
   overflow-y: auto;
 }
-
 .gifThumb {
   width: 100%;
   cursor: pointer;
   border: 2px solid #ff66ff;
 }
-
+.gifThumb:hover {
+  border-color: #ff99ff;
+  opacity: 0.8;
+}
 /* ---------------- IMAGES ---------------- */
-
 .chatImage {
   width: 140px;
   height: 140px;
   object-fit: cover;
   border: 2px solid #ff66ff;
 }
-
 /* ---------------- UTIL ---------------- */
-
 .hidden {
   display: none !important;
 }
