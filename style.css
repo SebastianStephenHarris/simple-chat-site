@@ -1,22 +1,58 @@
 body {
-  background: linear-gradient(135deg, #0a0015, #1a0033);
-  color: #fff;
-  font-family: Verdana, sans-serif;
   margin: 0;
-  padding: 20px;
+  font-family: Verdana;
+  background: linear-gradient(135deg, #0a0015, #1a0033);
+  color: white;
 }
 
-.panel {
-  width: min(100%, 900px);
-  margin: 0 auto;
+/* layout */
+.chatLayout {
+  display: flex;
+  height: 100vh;
 }
 
-/* chat box */
-#messages {
-  border: 3px inset #ff66ff;
-  height: 65vh;
+/* SIDE PANEL (emoji/emoticons always visible) */
+#sidePanel {
+  width: 220px;
+  background: #0a0015;
+  border-right: 2px solid #ff66ff;
+  padding: 10px;
   overflow-y: auto;
+}
+
+#sidePanel h3 {
+  margin: 10px 0;
+  font-size: 14px;
+  color: #ff99ff;
+}
+
+#emojiList, #emoticonList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+#sidePanel button {
+  background: #120022;
+  border: 1px solid #ff66ff;
+  color: white;
+  padding: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* CHAT MAIN */
+#chatMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* messages */
+#messages {
+  flex: 1;
   padding: 12px;
+  overflow-y: auto;
   background: #050010;
   display: flex;
   flex-direction: column;
@@ -26,41 +62,14 @@ body {
 /* typing */
 #typing {
   min-height: 20px;
-  font-size: 13px;
-  color: #ffccff;
+  padding-left: 10px;
+  font-size: 12px;
+  opacity: 0.8;
 }
 
-/* inputs */
-input {
-  width: 100%;
-  padding: 10px;
-  background: #120022;
-  color: white;
-  border: 2px solid #ff66ff;
-  outline: none;
-  box-sizing: border-box;
-}
-
-/* buttons */
-button {
-  background: linear-gradient(#ff00ff, #6600ff);
-  border: 2px outset #ff99ff;
-  color: white;
-  padding: 10px;
-  cursor: pointer;
-}
-
-/* toolbar */
-#toolbar {
-  display: flex;
-  gap: 8px;
-  margin: 10px 0;
-}
-
-/* messages */
+/* bubbles */
 .message {
   display: flex;
-  width: 100%;
 }
 
 .mine {
@@ -71,84 +80,73 @@ button {
   justify-content: flex-start;
 }
 
-/* bubbles */
 .bubble {
-  max-width: 65%;
+  max-width: 60%;
   padding: 10px;
-  border: 2px solid #ff66ff;
   background: #120022;
+  border: 2px solid #ff66ff;
   border-radius: 10px;
-
-  /* IMPORTANT FIX */
-  display: inline-block;
-  overflow: hidden;
   word-break: break-word;
-}
-
-/* replies */
-.reply {
-  font-size: 11px;
-  opacity: 0.8;
-  border-left: 3px solid #ff00ff;
-  padding-left: 6px;
-}
-
-/* 🔥 FIX: images no longer break layout */
-.chatImage,
-.gifThumb {
-  width: 140px !important;
-  max-width: 140px !important;
-  max-height: 140px !important;
-  display: block;
-  margin-top: 6px;
-  border-radius: 6px;
-  border: 2px solid #ff66ff;
-  object-fit: cover;
-}
-
-/* popup systems */
-.popup {
-  position: absolute;
-  background: #0a0015;
-  border: 2px solid #ff66ff;
-  padding: 10px;
-  z-index: 999;
-}
-
-/* emoji popup */
-#emojiPopup {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
-  width: 220px;
-}
-
-#emojiPopup button {
-  background: #120022;
-  border: 1px solid #ff66ff;
-  font-size: 16px;
-  padding: 4px;
-}
-
-.hidden {
-  display: none;
-}
-
-/* gif results */
-#gifResults {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  max-height: 250px;
-  overflow-y: auto;
 }
 
 /* reply bar */
 #replyBar {
+  background: #120022;
+  border-top: 2px solid #ff66ff;
+  padding: 6px;
   display: flex;
   justify-content: space-between;
-  padding: 8px;
+}
+
+/* INPUT BAR (DISCORD STYLE) */
+#inputBar {
+  display: flex;
+  gap: 6px;
+  padding: 10px;
+  background: #0a0015;
+  border-top: 2px solid #ff66ff;
+  align-items: center;
+}
+
+#messageInput {
+  flex: 1;
+  padding: 10px;
   background: #120022;
   border: 2px solid #ff66ff;
-  margin-bottom: 10px;
+  color: white;
+}
+
+/* icons inside bar */
+.iconBtn {
+  background: #120022;
+  border: 1px solid #ff66ff;
+  padding: 8px;
+  cursor: pointer;
+}
+
+/* images FIXED SIZE */
+.chatImage,
+.gifThumb {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid #ff66ff;
+}
+
+/* GIF panel */
+#gifPicker {
+  background: #0a0015;
+  border: 2px solid #ff66ff;
+  padding: 10px;
+}
+
+#gifResults {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.hidden {
+  display: none;
 }
