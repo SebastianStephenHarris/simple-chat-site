@@ -60,7 +60,8 @@ const THEMES = [
   { id: "cyberpunk", name: "Cyberpunk" },
   { id: "midnight", name: "Midnight" },
   { id: "light", name: "Light" },
-  { id: "forest", name: "Forest" }
+  { id: "forest", name: "Forest" },
+  { id: "hacker", name: "Old School Chatroom" }
 ];
 
 function applyTheme(id) {
@@ -241,7 +242,8 @@ function escAttr(s) {
 
 function nearBottom() {
   const m = document.getElementById("messages");
-  return m.scrollHeight - m.scrollTop - m.clientHeight < 60;
+  const threshold = window.visualViewport ? window.visualViewport.height * 0.2 : 60;
+  return m.scrollHeight - m.scrollTop - m.clientHeight < threshold;
 }
 
 function scrollToBottom() {
@@ -561,6 +563,9 @@ function sendMessage() {
   if (!sendPayload({ type: "message", id, username, color: userColor, text, reply: replyingTo })) {
     setStatusHint("Not connected — message was not sent");
   }
+
+  // Keep the keyboard open on mobile: re-focus after DOM settles
+  requestAnimationFrame(() => input.focus());
 }
 
 /* ---------------- MESSAGES ---------------- */
@@ -669,8 +674,71 @@ function makeImg(src, opts = {}) {
   };
 
   img.src = src || "";
-  return img;
+
+  // Wrap in a container with an expand button
+  const wrap = document.createElement("div");
+  wrap.className = "imgWrap";
+  wrap.appendChild(img);
+
+  const btn = document.createElement("button");
+  btn.className = "imgExpand";
+  btn.type = "button";
+  btn.textContent = "⤢";
+  btn.title = "Expand";
+  btn.setAttribute("aria-label", "Expand image");
+  btn.onclick = (e) => {
+    e.stopPropagation();
+    openLightbox(src);
+  };
+  wrap.appendChild(btn);
+
+  return wrap;
 }
+
+/* ---------------- LIGHTBOX ---------------- */
+
+function openLightbox(src) {
+  if (!src) return;
+  let box = document.getElementById("imgLightbox");
+  if (!box) {
+    box = document.createElement("div");
+    box.id = "imgLightbox";
+    box.className = "imgLightbox";
+    box.tabIndex = -1;
+    box.onclick = () => closeLightbox();
+
+    const img = document.createElement("img");
+    img.className = "imgLightboxImg";
+    box.appendChild(img);
+
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "imgLightboxClose";
+    closeBtn.type = "button";
+    closeBtn.textContent = "✕";
+    closeBtn.title = "Close";
+    closeBtn.setAttribute("aria-label", "Close expanded image");
+    closeBtn.onclick = (e) => { e.stopPropagation(); closeLightbox(); };
+    box.appendChild(closeBtn);
+
+    document.body.appendChild(box);
+  }
+  box.querySelector(".imgLightboxImg").src = src;
+  box.classList.add("open");
+  box.focus();
+  document.body.style.overflow = "hidden";
+}
+
+function closeLightbox() {
+  const box = document.getElementById("imgLightbox");
+  if (box) {
+    box.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeLightbox();
+});
 
 /* ---------------- SEEN / DELIVERED STATUS ---------------- */
 
@@ -999,6 +1067,18 @@ function closePanel() {
 
   if (savedName) {
     enterChat();
+  }
+
+  // Mobile keyboard: keep chat sized to the visual viewport (not the full document)
+  if (window.visualViewport) {
+    const applyVH = () => {
+      document.documentElement.style.setProperty("--app-h", window.visualViewport.height + "px");
+      // Re-anchor scroll after keyboard resize so the latest message stays visible
+      const m = document.getElementById("messages");
+      if (m && nearBottom()) scrollToBottom();
+    };
+    window.visualViewport.addEventListener("resize", applyVH);
+    applyVH();
   }
 })();
 
