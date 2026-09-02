@@ -508,6 +508,12 @@ function setupEventListeners() {
 
   document.getElementById("sendButton").onclick = sendMessage;
 
+  // Prevent mobile browser from stealing focus on touch (keeps keyboard open)
+  document.getElementById("sendButton").addEventListener("touchend", (e) => {
+    e.preventDefault();
+    sendMessage();
+  }, { passive: false });
+
   const gifSearch = document.getElementById("gifSearch");
   gifSearch.addEventListener("keydown", e => {
     if (e.key === "Enter") {
@@ -564,8 +570,9 @@ function sendMessage() {
     setStatusHint("Not connected — message was not sent");
   }
 
-  // Keep the keyboard open on mobile: re-focus after DOM settles
-  requestAnimationFrame(() => input.focus());
+  // Keep the keyboard open on mobile: delay focus until after DOM settles and
+  // the browser finishes its blur cycle. requestAnimationFrame is too fast.
+  setTimeout(() => input.focus(), 150);
 }
 
 /* ---------------- MESSAGES ---------------- */

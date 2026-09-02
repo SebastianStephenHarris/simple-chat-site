@@ -1109,36 +1109,36 @@ body:not([data-theme]) #sendButton:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* -------- HACKER: late-90s underground chatroom, CRT phosphor, toxic greens -------- */
+/* -------- OLD SCHOOL: Win95/98 desktop, silver bevels, plain text log -------- */
 [data-theme="hacker"] {
-  --font: "Courier New", "Fixedsys", "Consolas", "Lucida Console", monospace;
-  --color: #CCFF00;
-  --muted: rgba(204, 255, 0, 0.55);
-  --body-bg: #050505;
-  --panel-bg: #121410;
-  --panel-border: #334433;
-  --heading: #00FF38;
-  --btn-bg: #121410;
-  --btn-border: #334433;
-  --btn-hover: #1a1e16;
-  --bubble-bg: #0a0c08;
-  --bubble-border: #334433;
-  --bubble-hover-bg: #0f120c;
-  --bubble-hover-border: #39FF14;
-  --messages-bg: #050505;
-  --input-bg: #0a0c08;
-  --input-border: #334433;
-  --accent-grad: linear-gradient(#00FF38, #39FF14);
-  --btn-border-soft: #4A5D23;
-  --status: #00FF38;
-  --reply-bg: #0a0c08;
-  --reply-border: #00FF38;
-  --system: #FFFFFF;
+  --font: "Tahoma", "MS Sans Serif", "Arial", "Segoe UI", sans-serif;
+  --color: #000000;
+  --muted: #666666;
+  --body-bg: #C0C0C0;
+  --panel-bg: #C0C0C0;
+  --panel-border: #808080;
+  --heading: #000080;
+  --btn-bg: #C0C0C0;
+  --btn-border: #808080;
+  --btn-hover: #D4D0C8;
+  --bubble-bg: transparent;
+  --bubble-border: none;
+  --bubble-hover-bg: transparent;
+  --bubble-hover-border: none;
+  --messages-bg: #FFFFFF;
+  --input-bg: #FFFFFF;
+  --input-border: #808080;
+  --accent-grad: none;
+  --btn-border-soft: #808080;
+  --status: #008000;
+  --reply-bg: #ECE9D8;
+  --reply-border: #000080;
+  --system: #008000;
   --glow: none;
-  --radius: 0px;
+  --radius: 0px !important;
 }
 
-/* CRT scanlines overlay */
+/* Subtle CRT faint lines — barely visible */
 [data-theme="hacker"] body::before {
   content: "";
   position: fixed;
@@ -1147,113 +1147,123 @@ body:not([data-theme]) #sendButton:hover {
   pointer-events: none;
   background: repeating-linear-gradient(
     0deg,
-    rgba(0, 0, 0, 0.15) 0px,
-    rgba(0, 0, 0, 0.15) 1px,
+    rgba(0, 0, 0, 0.02) 0px,
+    rgba(0, 0, 0, 0.02) 1px,
     transparent 1px,
-    transparent 2px
+    transparent 3px
   );
 }
 
-/* Screen noise / grain overlay */
+/* Remove screen grain overlay */
 [data-theme="hacker"] body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 9998;
   pointer-events: none;
-  opacity: 0.04;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 200px 200px;
+  opacity: 0;
 }
 
-/* Phosphor bloom on key text */
-[data-theme="hacker"] .bubble strong,
+/* Username in messages — dark blue */
 [data-theme="hacker"] .bubble strong {
-  text-shadow: 0 0 2px rgba(0, 255, 65, 0.4);
-  color: #39FF14;
+  color: #000080;
+  text-shadow: none;
+  font-weight: bold;
 }
 
 [data-theme="hacker"] .msgStatus {
-  color: #8B8000;
+  color: #808080;
 }
 
-/* Dense side panel */
+/* Side panel — silver raised */
 [data-theme="hacker"] #sidePanel {
-  border-right: 2px solid #334433;
-  padding: 2px;
+  border-right: 2px solid #808080;
+  padding: 4px;
+  background: #C0C0C0;
 }
 [data-theme="hacker"] #sidePanel h3 {
   font-size: 11px;
-  color: #00FF38;
+  color: #000080;
   margin: 4px 0 2px;
-  letter-spacing: 1px;
+  letter-spacing: 0;
   text-transform: uppercase;
-  text-shadow: 0 0 2px rgba(0, 255, 56, 0.4);
+  text-shadow: none;
+  font-weight: bold;
+  border-bottom: 1px solid #808080;
+  padding-bottom: 2px;
 }
 [data-theme="hacker"] #onlineList {
   font-size: 11px;
-  gap: 1px;
+  gap: 2px;
 }
 [data-theme="hacker"] .onlineItem::before {
-  content: "■";
+  content: "●";
   font-size: 8px;
-  color: #00FF38;
+  color: #008000;
 }
 
-/* Messages area: hard edges, dense */
+/* Messages area — white, continuous text log */
 [data-theme="hacker"] #messages {
-  padding: 2px 4px;
+  background: #FFFFFF;
+  border: 2px inset #D4D0C8;
+  padding: 4px 6px;
   gap: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #000000;
 }
 [data-theme="hacker"] .message {
-  border-bottom: 1px solid #1a1e16;
-  padding: 1px 0;
+  border-bottom: none;
+  padding: 0;
+  background: transparent;
 }
 
-/* Bubbles: zero radius, hard borders, phosphor glow */
+/* Kill message bubbles — plain text log */
 [data-theme="hacker"] .bubble {
-  border: 2px solid #334433;
-  border-radius: 0;
-  max-width: 86%;
-  padding: 3px 6px;
-  background: #0a0c08;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  max-width: 100%;
+  padding: 0;
   font-size: 12px;
-  line-height: 1.15;
+  line-height: 1.4;
+  color: #000000;
   box-shadow: none;
+  margin: 0;
 }
 [data-theme="hacker"] .bubble:hover {
-  border-color: #39FF14;
-  box-shadow: 0 0 6px rgba(57, 255, 20, 0.15);
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none;
+}
+[data-theme="hacker"] .bubble strong {
+  color: #000080;
 }
 
-/* System messages: bracketed, white */
+/* System messages — dark green */
 [data-theme="hacker"] .system {
-  color: #FFFFFF;
+  color: #008000;
   font-size: 11px;
   padding: 1px 0;
-  text-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+  text-shadow: none;
 }
 [data-theme="hacker"] .system::before {
-  content: "[";
-  color: #8B8000;
+  content: none;
 }
 [data-theme="hacker"] .system::after {
-  content: "]";
-  color: #8B8000;
+  content: none;
 }
 
 /* Typing indicator */
 [data-theme="hacker"] #typing {
-  color: #00FF38;
+  color: #808080;
   font-size: 11px;
 }
 [data-theme="hacker"] #typing::before {
-  content: "> ";
-  color: #00FF38;
+  content: none;
 }
 
-/* Sunken inputs: 2px inset */
+/* Inputs — white inset fields */
 [data-theme="hacker"] .loginScreen input,
 [data-theme="hacker"] #messageInput,
 [data-theme="hacker"] #gifSearch,
@@ -1261,133 +1271,157 @@ body:not([data-theme]) #sendButton:hover {
 [data-theme="hacker"] #renameInput,
 [data-theme="hacker"] #themeSelect,
 [data-theme="hacker"] #serverSelect {
-  background: #050505;
-  border: 2px inset #222;
+  background: #FFFFFF;
+  border: 2px inset #D4D0C8;
   border-radius: 0;
-  color: #CCFF00;
+  color: #000000;
   font-family: var(--font);
   font-size: 12px;
   padding: 3px 4px;
 }
+[data-theme="hacker"] #themeSelect,
+[data-theme="hacker"] #serverSelect {
+  background: #FFFFFF;
+  color: #000000;
+  border: 2px inset #D4D0C8;
+  border-radius: 0;
+  font-family: var(--font);
+}
 
-/* Buttons: flat, hard-edged */
+/* Buttons — silver raised bevel */
 [data-theme="hacker"] .loginScreen button,
 [data-theme="hacker"] #sidePanel button,
 [data-theme="hacker"] .iconBtn,
-[data-theme="hacker"] #sendButton,
 [data-theme="hacker"] #gifPicker button,
 [data-theme="hacker"] #replyBar button {
-  background: #121410;
-  color: #00FF38;
-  border: 2px solid #334433;
+  background: #C0C0C0;
+  color: #000000;
+  border: 2px outset #FFFFFF;
+  border-right-color: #404040;
+  border-bottom-color: #404040;
   border-radius: 0;
   text-shadow: none;
   font-family: var(--font);
   font-size: 11px;
-  padding: 4px 8px;
+  padding: 4px 10px;
+  font-weight: normal;
 }
-[data-theme="hacker"] .loginScreen button:hover,
-[data-theme="hacker"] #sidePanel button:hover,
-[data-theme="hacker"] .iconBtn:hover,
-[data-theme="hacker"] #sendButton:hover {
-  background: #1a1e16;
-  border-color: #39FF14;
-  color: #39FF14;
+[data-theme="hacker"] .loginScreen button:active,
+[data-theme="hacker"] #sidePanel button:active,
+[data-theme="hacker"] .iconBtn:active,
+[data-theme="hacker"] #gifPicker button:active,
+[data-theme="hacker"] #replyBar button:active {
+  border: 2px inset #FFFFFF;
+  border-right-color: #FFFFFF;
+  border-bottom-color: #FFFFFF;
+  padding: 5px 9px 3px 11px;
 }
 [data-theme="hacker"] .loginScreen button {
-  background: #00FF38;
-  color: #050505;
-  border-color: #00FF38;
+  background: #C0C0C0;
+  color: #000000;
+  border: 2px outset #FFFFFF;
+  border-right-color: #404040;
+  border-bottom-color: #404040;
   font-weight: bold;
 }
-[data-theme="hacker"] .loginScreen button:hover {
-  background: #39FF14;
-  border-color: #39FF14;
+[data-theme="hacker"] .loginScreen button:active {
+  border: 2px inset #FFFFFF;
+  border-right-color: #FFFFFF;
+  border-bottom-color: #FFFFFF;
 }
 
-/* Login screen */
+/* Login screen — silver desktop */
 [data-theme="hacker"] .loginScreen {
-  background: #050505;
+  background: #C0C0C0;
 }
 [data-theme="hacker"] .loginScreen h2 {
   font-size: 14px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  text-shadow: 0 0 4px rgba(0, 255, 56, 0.5);
+  letter-spacing: 0;
+  text-transform: none;
+  text-shadow: none;
+  color: #000080;
+  font-weight: bold;
 }
 
-/* Input bar: hard-edged, dense */
+/* Input bar — silver raised */
 [data-theme="hacker"] #inputBar {
-  border-top: 2px solid #334433;
-  padding: 3px;
-  gap: 2px;
+  border-top: 2px solid #FFFFFF;
+  padding: 4px;
+  gap: 4px;
+  background: #C0C0C0;
 }
 [data-theme="hacker"] .iconBtn {
   padding: 4px 6px;
   font-size: 11px;
 }
+/* Send button — no special styling, just normal raised */
 [data-theme="hacker"] #sendButton {
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-weight: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  background: #C0C0C0;
+  color: #000000;
+  border: 2px outset #FFFFFF;
+  border-right-color: #404040;
+  border-bottom-color: #404040;
+}
+[data-theme="hacker"] #sendButton:active {
+  border: 2px inset #FFFFFF;
+  border-right-color: #FFFFFF;
+  border-bottom-color: #FFFFFF;
 }
 
 /* Reply bar */
 [data-theme="hacker"] #replyBar {
-  border-top: 1px solid #334433;
-  border-bottom: 1px solid #334433;
-  background: #0a0c08;
+  border-top: 2px inset #D4D0C8;
+  border-bottom: 2px inset #D4D0C8;
+  background: #C0C0C0;
   font-size: 11px;
 }
 
-/* Emoji / GIF pickers: hard-edged */
+/* Emoji / GIF pickers — silver panels */
 [data-theme="hacker"] #emojiPicker,
 [data-theme="hacker"] #gifPicker {
-  border: 2px solid #334433;
+  border: 2px outset #FFFFFF;
+  border-right-color: #404040;
+  border-bottom-color: #404040;
   border-radius: 0;
+  background: #C0C0C0;
 }
 [data-theme="hacker"] #emojiPickerHeader {
-  border-bottom: 1px solid #334433;
-  background: #121410;
+  border-bottom: 1px solid #808080;
+  background: #C0C0C0;
 }
 
-/* Retro sunken scrollbars */
+/* Scrollbars — Win95 style */
 [data-theme="hacker"] ::-webkit-scrollbar {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
 }
 [data-theme="hacker"] ::-webkit-scrollbar-track {
-  background: #0a0c08;
-  border: 1px solid #334433;
+  background: repeating-conic-gradient(#C0C0C0 0% 25%, #FFFFFF 0% 50%) 50% / 2px 2px;
 }
 [data-theme="hacker"] ::-webkit-scrollbar-thumb {
-  background: #334433;
-  border: 1px solid #4A5D23;
+  background: #C0C0C0;
+  border: 2px outset #FFFFFF;
+  border-right-color: #404040;
+  border-bottom-color: #404040;
 }
 [data-theme="hacker"] ::-webkit-scrollbar-thumb:hover {
-  background: #4A5D23;
+  background: #D4D0C8;
 }
 [data-theme="hacker"] ::-webkit-scrollbar-button {
-  background: #121410;
-  border: 1px solid #334433;
+  background: #C0C0C0;
+  border: 2px outset #FFFFFF;
+  border-right-color: #404040;
+  border-bottom-color: #404040;
   display: block;
-  height: 14px;
+  height: 16px;
 }
 
-/* Accent grad button (send) */
-[data-theme="hacker"] #sendButton {
-  background: #00FF38;
-  color: #050505;
-  border-color: #00FF38;
-}
-[data-theme="hacker"] #sendButton:hover {
-  background: #39FF14;
-  box-shadow: 0 0 8px rgba(57, 255, 20, 0.35);
-}
-
-/* Images: hard-edged */
+/* Images */
 [data-theme="hacker"] .chatImage {
-  border: 2px solid #334433;
+  border: 2px inset #D4D0C8;
   border-radius: 0;
 }
 
@@ -1401,10 +1435,13 @@ body:not([data-theme]) #sendButton:hover {
 
 /* Profile */
 [data-theme="hacker"] #profile {
-  border: 1px solid #334433;
+  border: 2px outset #FFFFFF;
+  border-right-color: #404040;
+  border-bottom-color: #404040;
   font-size: 11px;
+  background: #C0C0C0;
 }
 [data-theme="hacker"] #profileName {
-  color: #00FF38;
-  text-shadow: 0 0 2px rgba(0, 255, 56, 0.4);
+  color: #000080;
+  text-shadow: none;
 }
