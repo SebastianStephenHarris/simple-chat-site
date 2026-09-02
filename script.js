@@ -544,13 +544,15 @@ function sendMessage() {
   if (!text) return;
 
   const id = uid();
+  input.value = "";
+  sendTyping(false);
+  clearReply();
+
   renderMessage({ type: "message", id, senderId: myClientId, username, color: userColor, text, reply: replyingTo }, true);
 
-  if (!sendPayload({ type: "message", id, username, color: userColor, text, reply: replyingTo })) return;
-
-  sendTyping(false);
-  input.value = "";
-  clearReply();
+  if (!sendPayload({ type: "message", id, username, color: userColor, text, reply: replyingTo })) {
+    setStatusHint("Not connected — message was not sent");
+  }
 }
 
 /* ---------------- MESSAGES ---------------- */
