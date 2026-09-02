@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Chatroom</title>
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 
 <body>
@@ -55,8 +55,12 @@
 
   </div>
 
+  <div id="sideBackdrop" class="hidden" onclick="closePanel()"></div>
+
   <!-- MAIN CHAT -->
   <div id="chatMain">
+
+    <button id="menuBtn" type="button" onclick="togglePanel()" title="Show options">☰</button>
 
     <div id="messages"></div>
     <div id="typing"></div>
@@ -100,6 +104,6 @@
   </div>
 </div>
 
-<script src="script.js?v=4"></script>
+<script src="script.js?v=6"></script>
 </body>
 </html>

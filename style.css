@@ -246,6 +246,7 @@ body {
 /* ---------------- LOGIN ---------------- */
 .loginScreen {
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -277,6 +278,7 @@ body {
 .chatLayout {
   display: flex;
   height: 100vh;
+  height: 100dvh;
 }
 
 /* ---------------- SIDE PANEL ---------------- */
@@ -450,6 +452,11 @@ body {
   color: var(--color);
 }
 
+/* ---------------- MENU (mobile) ---------------- */
+#menuBtn {
+  display: none;
+}
+
 /* ---------------- CHAT ---------------- */
 #chatMain {
   flex: 1;
@@ -479,7 +486,8 @@ body {
   display: flex;
 }
 .mine {
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
 }
 .theirs {
   justify-content: flex-start;
@@ -655,6 +663,68 @@ body {
   border-radius: 5px;
 }
 
+/* ============================== MOBILE ============================== */
+@media (max-width: 768px) {
+  #menuBtn {
+    display: block;
+    align-self: flex-start;
+    margin: 8px 8px 0;
+    padding: 5px 12px;
+    font-size: 18px;
+    line-height: 1.1;
+    border-radius: 6px;
+  }
+
+  #sideBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  #sidePanel {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: min(260px, 82vw);
+    z-index: 50;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+
+  body.panel-open #sidePanel {
+    transform: translateX(0);
+  }
+
+  .bubble {
+    max-width: 86%;
+  }
+
+  #messages {
+    padding: 8px;
+  }
+
+  #inputBar {
+    gap: 4px;
+    padding: 8px;
+  }
+
+  .iconBtn {
+    padding: 6px;
+  }
+
+  #gifResults {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .chatImage {
+    width: 110px;
+    height: 110px;
+  }
+}
+
 /* ============================== THEME DEEP-DIVES ============================== */
 /* Extra flavour stacked on top of the base variable palette. */
 
@@ -741,7 +811,7 @@ body:not([data-theme]) #sendButton:hover {
   color: #00ffcc;
   font-style: normal;
 }
-[data-theme="retro"] .bubble .msgStatus {
+[data-theme="retro"] .message .msgStatus {
   display: block;
   text-align: left;
   color: #33ff33;

@@ -9,7 +9,8 @@ let replyingTo = null;
 let missed = 0;
 let isAtBottom = true;
 const pendingSeen = new Set();
-const sentMsgs = new Map();        // id -> { footer, statuses: Map<username, status> }
+const myFooters = new Map();  // my message id -> .msgStatus element
+const lastRead = new Map();   // seer username -> latest of my messages they've seen
 const typingUsers = new Map();     // username -> timestamp of last "typing"
 let statusHint = "";
 
@@ -563,6 +564,8 @@ function receiveChat(d) {
 
   if (isMine) return;
 
+  if (lastRead.delete(d.username)) refreshSeenMarkers();
+
   if (document.hasFocus() && nearBottom()) {
     sendPayload({ type: "seen", id: d.id });
   } else {
@@ -618,14 +621,15 @@ function renderMessage(d, isMine) {
 
   bubble.style.cursor = "pointer";
 
+  el.appendChild(bubble);
+
   if (isMine) {
     const footer = document.createElement("div");
     footer.className = "msgStatus";
-    bubble.appendChild(footer);
-    sentMsgs.set(d.id, { footer, statuses: new Map() });
+    el.appendChild(footer);
+    myFooters.set(d.id, footer);
   }
 
-  el.appendChild(bubble);
   document.getElementById("messages").appendChild(el);
 
   if (nearBottom()) scrollToBottom();
@@ -664,12 +668,18 @@ function makeImg(src, opts = {}) {
 /* ---------------- SEEN / DELIVERED STATUS ---------------- */
 
 function handleSentStatus(d) {
-  const entry = sentMsgs.get(d.id);
-  if (!entry) return;
+  if (!d || d.status !== "seen" || !d.username || !myFooters.has(d.id)) return;
+  lastRead.set(d.username, d.id);
+  refreshSeenMarkers();
+}
 
-  entry.statuses.set(d.username, d.status);
-  const parts = [...entry.statuses.entries()].map(([name, status]) => `${name} ${status}`);
-  entry.footer.textContent = parts.join(" · ");
+function refreshSeenMarkers() {
+  for (const [id, footer] of myFooters) {
+    const names = [...lastRead.entries()]
+      .filter(([, rid]) => rid === id)
+      .map(([name]) => name);
+    footer.textContent = names.length ? "Seen by " + names.join(", ") : "";
+  }
 }
 
 /* ---------------- IMAGE UPLOAD ---------------- */
@@ -946,12 +956,31 @@ function clearReply() {
   if (replyBar) replyBar.classList.add("hidden");
 }
 
+/* ---------------- MOBILE PANEL ---------------- */
+
+function togglePanel() {
+  const open = document.body.classList.toggle("panel-open");
+  const backdrop = document.getElementById("sideBackdrop");
+  if (backdrop) backdrop.classList.toggle("hidden", !open);
+}
+
+function closePanel() {
+  document.body.classList.remove("panel-open");
+  const backdrop = document.getElementById("sideBackdrop");
+  if (backdrop) backdrop.classList.add("hidden");
+}
+
 /* ---------------- INIT ---------------- */
 
 (function init() {
   buildThemeSelect();
   buildServerSelect();
   applyTheme(STORE.get(STORE.theme) || "default");
+
+  const mq = window.matchMedia("(min-width: 769px)");
+  const mqSync = () => { if (mq.matches) closePanel(); };
+  if (mq.addEventListener) mq.addEventListener("change", mqSync);
+  else mq.addListener(mqSync);
 
   const savedName = STORE.get(STORE.name);
   const savedColor = STORE.get(STORE.color);
