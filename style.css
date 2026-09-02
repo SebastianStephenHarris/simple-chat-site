@@ -576,12 +576,49 @@ body {
 #inputBar {
   position: relative;
   display: flex;
+  flex-direction: column;
   gap: 6px;
   padding: 10px;
   background: var(--panel-bg);
   border-top: 2px solid var(--panel-border);
 }
-#messageInput {
+#formatBar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+#fontSelect {
+  flex: 1;
+  min-width: 0;
+  padding: 6px;
+  background: var(--input-bg);
+  border: 2px solid var(--input-border);
+  color: var(--color);
+}
+.fmtBtn {
+  font-weight: 900;
+  min-width: 34px;
+  text-align: center;
+}
+.fmtBtn#fmtItalic {
+  font-style: italic;
+  font-weight: normal;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+.fmtBtn#fmtUnderline {
+  text-decoration: underline;
+  font-weight: normal;
+}
+.fmtBtn.active {
+  background: var(--btn-hover);
+  box-shadow: inset 0 0 0 2px var(--btn-border-soft);
+}
+#inputWrap {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+#inputWrap #messageInput {
   flex: 1;
   min-width: 0;
   padding: 10px;
@@ -1110,7 +1147,7 @@ body:not([data-theme]) #sendButton:hover {
 }
 
 /* -------- OLD SCHOOL: Win95/98 desktop, silver bevels, plain text log -------- */
-[data-theme="hacker"] {
+[data-theme="oldschool"] {
   --font: "Tahoma", "MS Sans Serif", "Arial", "Segoe UI", sans-serif;
   --color: #000000;
   --muted: #666666;
@@ -1139,7 +1176,7 @@ body:not([data-theme]) #sendButton:hover {
 }
 
 /* Subtle CRT faint lines — barely visible */
-[data-theme="hacker"] body::before {
+[data-theme="oldschool"] body::before {
   content: "";
   position: fixed;
   inset: 0;
@@ -1155,7 +1192,7 @@ body:not([data-theme]) #sendButton:hover {
 }
 
 /* Remove screen grain overlay */
-[data-theme="hacker"] body::after {
+[data-theme="oldschool"] body::after {
   content: "";
   position: fixed;
   inset: 0;
@@ -1165,23 +1202,23 @@ body:not([data-theme]) #sendButton:hover {
 }
 
 /* Username in messages — dark blue */
-[data-theme="hacker"] .bubble strong {
+[data-theme="oldschool"] .bubble strong {
   color: #000080;
   text-shadow: none;
   font-weight: bold;
 }
 
-[data-theme="hacker"] .msgStatus {
+[data-theme="oldschool"] .msgStatus {
   color: #808080;
 }
 
 /* Side panel — silver raised */
-[data-theme="hacker"] #sidePanel {
+[data-theme="oldschool"] #sidePanel {
   border-right: 2px solid #808080;
   padding: 4px;
   background: #C0C0C0;
 }
-[data-theme="hacker"] #sidePanel h3 {
+[data-theme="oldschool"] #sidePanel h3 {
   font-size: 11px;
   color: #000080;
   margin: 4px 0 2px;
@@ -1192,18 +1229,18 @@ body:not([data-theme]) #sendButton:hover {
   border-bottom: 1px solid #808080;
   padding-bottom: 2px;
 }
-[data-theme="hacker"] #onlineList {
+[data-theme="oldschool"] #onlineList {
   font-size: 11px;
   gap: 2px;
 }
-[data-theme="hacker"] .onlineItem::before {
+[data-theme="oldschool"] .onlineItem::before {
   content: "●";
   font-size: 8px;
   color: #008000;
 }
 
 /* Messages area — white, continuous text log */
-[data-theme="hacker"] #messages {
+[data-theme="oldschool"] #messages {
   background: #FFFFFF;
   border: 2px inset #D4D0C8;
   padding: 4px 6px;
@@ -1212,14 +1249,23 @@ body:not([data-theme]) #sendButton:hover {
   line-height: 1.4;
   color: #000000;
 }
-[data-theme="hacker"] .message {
+[data-theme="oldschool"] .message,
+[data-theme="oldschool"] .mine,
+[data-theme="oldschool"] .theirs {
+  display: block;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
   border-bottom: none;
   padding: 0;
   background: transparent;
 }
 
-/* Kill message bubbles — plain text log */
-[data-theme="hacker"] .bubble {
+/* Kill message bubbles — plain text log, "name: message" inline */
+[data-theme="oldschool"] .bubble {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
   background: transparent !important;
   border: none !important;
   border-radius: 0 !important;
@@ -1231,46 +1277,64 @@ body:not([data-theme]) #sendButton:hover {
   box-shadow: none;
   margin: 0;
 }
-[data-theme="hacker"] .bubble:hover {
+[data-theme="oldschool"] .bubble:hover {
   background: transparent !important;
   border-color: transparent !important;
   box-shadow: none;
 }
-[data-theme="hacker"] .bubble strong {
+[data-theme="oldschool"] .bubble strong {
   color: #000080;
+  font-weight: bold;
+  padding-right: 4px;
+  white-space: nowrap;
+}
+[data-theme="oldschool"] .bubble strong::after {
+  content: ":";
+  color: #000000;
+  font-weight: normal;
+}
+[data-theme="oldschool"] .bubble .fmtBody {
+  display: inline;
+  flex: 1 1 auto;
+  min-width: 0;
+  word-wrap: break-word;
+}
+[data-theme="oldschool"] .bubble .reply {
+  flex-basis: 100%;
 }
 
 /* System messages — dark green */
-[data-theme="hacker"] .system {
+[data-theme="oldschool"] .system {
   color: #008000;
   font-size: 11px;
   padding: 1px 0;
   text-shadow: none;
 }
-[data-theme="hacker"] .system::before {
+[data-theme="oldschool"] .system::before {
   content: none;
 }
-[data-theme="hacker"] .system::after {
+[data-theme="oldschool"] .system::after {
   content: none;
 }
 
 /* Typing indicator */
-[data-theme="hacker"] #typing {
+[data-theme="oldschool"] #typing {
   color: #808080;
   font-size: 11px;
 }
-[data-theme="hacker"] #typing::before {
+[data-theme="oldschool"] #typing::before {
   content: none;
 }
 
 /* Inputs — white inset fields */
-[data-theme="hacker"] .loginScreen input,
-[data-theme="hacker"] #messageInput,
-[data-theme="hacker"] #gifSearch,
-[data-theme="hacker"] #emojiSearch,
-[data-theme="hacker"] #renameInput,
-[data-theme="hacker"] #themeSelect,
-[data-theme="hacker"] #serverSelect {
+[data-theme="oldschool"] .loginScreen input,
+[data-theme="oldschool"] #messageInput,
+[data-theme="oldschool"] #gifSearch,
+[data-theme="oldschool"] #emojiSearch,
+[data-theme="oldschool"] #renameInput,
+[data-theme="oldschool"] #fontSelect,
+[data-theme="oldschool"] #themeSelect,
+[data-theme="oldschool"] #serverSelect {
   background: #FFFFFF;
   border: 2px inset #D4D0C8;
   border-radius: 0;
@@ -1279,8 +1343,9 @@ body:not([data-theme]) #sendButton:hover {
   font-size: 12px;
   padding: 3px 4px;
 }
-[data-theme="hacker"] #themeSelect,
-[data-theme="hacker"] #serverSelect {
+[data-theme="oldschool"] #fontSelect,
+[data-theme="oldschool"] #themeSelect,
+[data-theme="oldschool"] #serverSelect {
   background: #FFFFFF;
   color: #000000;
   border: 2px inset #D4D0C8;
@@ -1289,11 +1354,11 @@ body:not([data-theme]) #sendButton:hover {
 }
 
 /* Buttons — silver raised bevel */
-[data-theme="hacker"] .loginScreen button,
-[data-theme="hacker"] #sidePanel button,
-[data-theme="hacker"] .iconBtn,
-[data-theme="hacker"] #gifPicker button,
-[data-theme="hacker"] #replyBar button {
+[data-theme="oldschool"] .loginScreen button,
+[data-theme="oldschool"] #sidePanel button,
+[data-theme="oldschool"] .iconBtn,
+[data-theme="oldschool"] #gifPicker button,
+[data-theme="oldschool"] #replyBar button {
   background: #C0C0C0;
   color: #000000;
   border: 2px outset #FFFFFF;
@@ -1306,17 +1371,17 @@ body:not([data-theme]) #sendButton:hover {
   padding: 4px 10px;
   font-weight: normal;
 }
-[data-theme="hacker"] .loginScreen button:active,
-[data-theme="hacker"] #sidePanel button:active,
-[data-theme="hacker"] .iconBtn:active,
-[data-theme="hacker"] #gifPicker button:active,
-[data-theme="hacker"] #replyBar button:active {
+[data-theme="oldschool"] .loginScreen button:active,
+[data-theme="oldschool"] #sidePanel button:active,
+[data-theme="oldschool"] .iconBtn:active,
+[data-theme="oldschool"] #gifPicker button:active,
+[data-theme="oldschool"] #replyBar button:active {
   border: 2px inset #FFFFFF;
   border-right-color: #FFFFFF;
   border-bottom-color: #FFFFFF;
   padding: 5px 9px 3px 11px;
 }
-[data-theme="hacker"] .loginScreen button {
+[data-theme="oldschool"] .loginScreen button {
   background: #C0C0C0;
   color: #000000;
   border: 2px outset #FFFFFF;
@@ -1324,17 +1389,17 @@ body:not([data-theme]) #sendButton:hover {
   border-bottom-color: #404040;
   font-weight: bold;
 }
-[data-theme="hacker"] .loginScreen button:active {
+[data-theme="oldschool"] .loginScreen button:active {
   border: 2px inset #FFFFFF;
   border-right-color: #FFFFFF;
   border-bottom-color: #FFFFFF;
 }
 
 /* Login screen — silver desktop */
-[data-theme="hacker"] .loginScreen {
+[data-theme="oldschool"] .loginScreen {
   background: #C0C0C0;
 }
-[data-theme="hacker"] .loginScreen h2 {
+[data-theme="oldschool"] .loginScreen h2 {
   font-size: 14px;
   letter-spacing: 0;
   text-transform: none;
@@ -1344,18 +1409,18 @@ body:not([data-theme]) #sendButton:hover {
 }
 
 /* Input bar — silver raised */
-[data-theme="hacker"] #inputBar {
+[data-theme="oldschool"] #inputBar {
   border-top: 2px solid #FFFFFF;
   padding: 4px;
   gap: 4px;
   background: #C0C0C0;
 }
-[data-theme="hacker"] .iconBtn {
+[data-theme="oldschool"] .iconBtn {
   padding: 4px 6px;
   font-size: 11px;
 }
 /* Send button — no special styling, just normal raised */
-[data-theme="hacker"] #sendButton {
+[data-theme="oldschool"] #sendButton {
   font-weight: normal;
   text-transform: none;
   letter-spacing: 0;
@@ -1365,14 +1430,14 @@ body:not([data-theme]) #sendButton:hover {
   border-right-color: #404040;
   border-bottom-color: #404040;
 }
-[data-theme="hacker"] #sendButton:active {
+[data-theme="oldschool"] #sendButton:active {
   border: 2px inset #FFFFFF;
   border-right-color: #FFFFFF;
   border-bottom-color: #FFFFFF;
 }
 
 /* Reply bar */
-[data-theme="hacker"] #replyBar {
+[data-theme="oldschool"] #replyBar {
   border-top: 2px inset #D4D0C8;
   border-bottom: 2px inset #D4D0C8;
   background: #C0C0C0;
@@ -1380,37 +1445,37 @@ body:not([data-theme]) #sendButton:hover {
 }
 
 /* Emoji / GIF pickers — silver panels */
-[data-theme="hacker"] #emojiPicker,
-[data-theme="hacker"] #gifPicker {
+[data-theme="oldschool"] #emojiPicker,
+[data-theme="oldschool"] #gifPicker {
   border: 2px outset #FFFFFF;
   border-right-color: #404040;
   border-bottom-color: #404040;
   border-radius: 0;
   background: #C0C0C0;
 }
-[data-theme="hacker"] #emojiPickerHeader {
+[data-theme="oldschool"] #emojiPickerHeader {
   border-bottom: 1px solid #808080;
   background: #C0C0C0;
 }
 
 /* Scrollbars — Win95 style */
-[data-theme="hacker"] ::-webkit-scrollbar {
+[data-theme="oldschool"] ::-webkit-scrollbar {
   width: 16px;
   height: 16px;
 }
-[data-theme="hacker"] ::-webkit-scrollbar-track {
+[data-theme="oldschool"] ::-webkit-scrollbar-track {
   background: repeating-conic-gradient(#C0C0C0 0% 25%, #FFFFFF 0% 50%) 50% / 2px 2px;
 }
-[data-theme="hacker"] ::-webkit-scrollbar-thumb {
+[data-theme="oldschool"] ::-webkit-scrollbar-thumb {
   background: #C0C0C0;
   border: 2px outset #FFFFFF;
   border-right-color: #404040;
   border-bottom-color: #404040;
 }
-[data-theme="hacker"] ::-webkit-scrollbar-thumb:hover {
+[data-theme="oldschool"] ::-webkit-scrollbar-thumb:hover {
   background: #D4D0C8;
 }
-[data-theme="hacker"] ::-webkit-scrollbar-button {
+[data-theme="oldschool"] ::-webkit-scrollbar-button {
   background: #C0C0C0;
   border: 2px outset #FFFFFF;
   border-right-color: #404040;
@@ -1420,28 +1485,28 @@ body:not([data-theme]) #sendButton:hover {
 }
 
 /* Images */
-[data-theme="hacker"] .chatImage {
+[data-theme="oldschool"] .chatImage {
   border: 2px inset #D4D0C8;
   border-radius: 0;
 }
 
 /* Rename box */
-[data-theme="hacker"] #renameBox input {
+[data-theme="oldschool"] #renameBox input {
   font-family: var(--font);
 }
-[data-theme="hacker"] #renameBox button {
+[data-theme="oldschool"] #renameBox button {
   font-family: var(--font);
 }
 
 /* Profile */
-[data-theme="hacker"] #profile {
+[data-theme="oldschool"] #profile {
   border: 2px outset #FFFFFF;
   border-right-color: #404040;
   border-bottom-color: #404040;
   font-size: 11px;
   background: #C0C0C0;
 }
-[data-theme="hacker"] #profileName {
+[data-theme="oldschool"] #profileName {
   color: #000080;
   text-shadow: none;
 }

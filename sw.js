@@ -2,13 +2,13 @@
    Strategy: network-first for same-origin static files, cache as offline fallback.
    WebSocket traffic, cross-origin API calls, and user content are never touched. */
 
-const CACHE = "chatroom-shell-v2";
+const CACHE = "chatroom-shell-v3";
 
 const PRECACHE = [
   "./",
   "./index.html",
-  "./style.css?v=5",
-  "./script.js?v=8",
+  "./style.css?v=6",
+  "./script.js?v=9",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",

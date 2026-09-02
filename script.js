@@ -6,6 +6,11 @@ let username;
 let userColor;
 let replyingTo = null;
 
+let fmtFont = "";
+let fmtBold = false;
+let fmtItalic = false;
+let fmtUnderline = false;
+
 let missed = 0;
 let isAtBottom = true;
 const pendingSeen = new Set();
@@ -61,10 +66,11 @@ const THEMES = [
   { id: "midnight", name: "Midnight" },
   { id: "light", name: "Light" },
   { id: "forest", name: "Forest" },
-  { id: "hacker", name: "Old School Chatroom" }
+  { id: "oldschool", name: "Old School Chatroom" }
 ];
 
 function applyTheme(id) {
+  if (id === "hacker") id = "oldschool"; // migrate old id
   if (id && id !== "default") {
     document.body.setAttribute("data-theme", id);
   } else {
@@ -508,6 +514,17 @@ function setupEventListeners() {
 
   document.getElementById("sendButton").onclick = sendMessage;
 
+  // Formatting bar
+  const fontSelect = document.getElementById("fontSelect");
+  const fmtBoldBtn = document.getElementById("fmtBold");
+  const fmtItalicBtn = document.getElementById("fmtItalic");
+  const fmtUnderBtn = document.getElementById("fmtUnderline");
+
+  fontSelect.addEventListener("change", () => { fmtFont = fontSelect.value; syncFmtButtons(); });
+  fmtBoldBtn.addEventListener("click", () => { fmtBold = !fmtBold; syncFmtButtons(); });
+  fmtItalicBtn.addEventListener("click", () => { fmtItalic = !fmtItalic; syncFmtButtons(); });
+  fmtUnderBtn.addEventListener("click", () => { fmtUnderline = !fmtUnderline; syncFmtButtons(); });
+
   // Prevent mobile browser from stealing focus on touch (keeps keyboard open)
   document.getElementById("sendButton").addEventListener("touchend", (e) => {
     e.preventDefault();
@@ -552,6 +569,24 @@ function setupEventListeners() {
 
 /* ---------------- SEND MESSAGE ---------------- */
 
+function syncFmtButtons() {
+  const b = document.getElementById("fmtBold");
+  const i = document.getElementById("fmtItalic");
+  const u = document.getElementById("fmtUnderline");
+  if (b) b.classList.toggle("active", fmtBold);
+  if (i) i.classList.toggle("active", fmtItalic);
+  if (u) u.classList.toggle("active", fmtUnderline);
+}
+
+function currentFormat() {
+  const f = {};
+  if (fmtFont) f.font = fmtFont;
+  if (fmtBold) f.bold = true;
+  if (fmtItalic) f.italic = true;
+  if (fmtUnderline) f.underline = true;
+  return f;
+}
+
 function sendMessage() {
   if (!username) return;
 
@@ -560,13 +595,14 @@ function sendMessage() {
   if (!text) return;
 
   const id = uid();
+  const fmt = currentFormat();
   input.value = "";
   sendTyping(false);
   clearReply();
 
-  renderMessage({ type: "message", id, senderId: myClientId, username, color: userColor, text, reply: replyingTo }, true);
+  renderMessage({ type: "message", id, senderId: myClientId, username, color: userColor, text, fmt, reply: replyingTo }, true);
 
-  if (!sendPayload({ type: "message", id, username, color: userColor, text, reply: replyingTo })) {
+  if (!sendPayload({ type: "message", id, username, color: userColor, text, fmt, reply: replyingTo })) {
     setStatusHint("Not connected — message was not sent");
   }
 
@@ -619,8 +655,10 @@ function renderMessage(d, isMine) {
       bubble.appendChild(reply);
     }
 
-    const body = document.createElement("div");
+    const body = document.createElement("span");
+    body.className = "fmtBody";
     body.textContent = d.text;
+    if (d.fmt) applyFmt(body, d.fmt);
     bubble.appendChild(body);
 
     bubble.onclick = () => setReply(d.username, d.text);
@@ -652,6 +690,14 @@ function renderMessage(d, isMine) {
   document.getElementById("messages").appendChild(el);
 
   if (nearBottom()) scrollToBottom();
+}
+
+function applyFmt(el, fmt) {
+  if (!fmt) return;
+  if (fmt.font) el.style.fontFamily = fmt.font;
+  if (fmt.bold) el.style.fontWeight = "bold";
+  if (fmt.italic) el.style.fontStyle = "italic";
+  if (fmt.underline) el.style.textDecoration = "underline";
 }
 
 function makeImg(src, opts = {}) {
