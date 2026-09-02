@@ -10,6 +10,7 @@ let fmtFont = "";
 let fmtBold = false;
 let fmtItalic = false;
 let fmtUnderline = false;
+let fmtColor = "";
 
 const FONTS = [
   { value: "", name: "System" },
@@ -533,6 +534,7 @@ function setupEventListeners() {
   const fmtBoldBtn = document.getElementById("fmtBold");
   const fmtItalicBtn = document.getElementById("fmtItalic");
   const fmtUnderBtn = document.getElementById("fmtUnderline");
+  const fmtColorInput = document.getElementById("fmtColor");
   const fontMenu = document.getElementById("fontMenu");
 
   buildFontMenu(fontMenu);
@@ -540,6 +542,11 @@ function setupEventListeners() {
   fmtBoldBtn.addEventListener("click", () => { fmtBold = !fmtBold; syncFmtButtons(); });
   fmtItalicBtn.addEventListener("click", () => { fmtItalic = !fmtItalic; syncFmtButtons(); });
   fmtUnderBtn.addEventListener("click", () => { fmtUnderline = !fmtUnderline; syncFmtButtons(); });
+  fmtColorInput.addEventListener("input", () => {
+    fmtColor = fmtColorInput.value || "";
+    syncFmtButtons();
+  });
+  fmtColorInput.addEventListener("change", () => { syncFmtButtons(); });
 
   document.addEventListener("click", () => closeFontMenu(fontMenu, fmtFontBtn));
 
@@ -625,10 +632,14 @@ function syncFmtButtons() {
   const b = document.getElementById("fmtBold");
   const i = document.getElementById("fmtItalic");
   const u = document.getElementById("fmtUnderline");
+  const c = document.getElementById("fmtColorWrap");
+  const ci = document.getElementById("fmtColor");
   if (f) f.classList.toggle("active", !!fmtFont);
   if (b) b.classList.toggle("active", fmtBold);
   if (i) i.classList.toggle("active", fmtItalic);
   if (u) u.classList.toggle("active", fmtUnderline);
+  if (c) c.classList.toggle("active", !!fmtColor);
+  if (ci) ci.value = fmtColor || "#000000";
 
   const menu = document.getElementById("fontMenu");
   if (menu) {
@@ -644,6 +655,7 @@ function currentFormat() {
   if (fmtBold) f.bold = true;
   if (fmtItalic) f.italic = true;
   if (fmtUnderline) f.underline = true;
+  if (fmtColor && isValidColor(fmtColor)) f.color = fmtColor;
   return f;
 }
 
@@ -769,6 +781,7 @@ function applyFmt(el, fmt) {
   if (fmt.bold) el.style.fontWeight = "bold";
   if (fmt.italic) el.style.fontStyle = "italic";
   if (fmt.underline) el.style.textDecoration = "underline";
+  if (fmt.color && isValidColor(fmt.color)) el.style.color = fmt.color;
 }
 
 function makeImg(src, opts = {}) {

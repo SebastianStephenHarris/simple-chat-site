@@ -594,11 +594,39 @@ body {
   align-items: center;
   gap: 4px;
 }
+.fmtBtn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
 #fmtFont {
   font-family: Impact, 'Arial Black', sans-serif;
   font-weight: normal;
-  font-size: 15px;
+  font-size: 16px;
   letter-spacing: 1px;
+}
+#fmtColorWrap {
+  position: relative;
+  cursor: pointer;
+}
+#fmtColorWrap input[type="color"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+}
+#fmtColorWrap span {
+  font-size: 14px;
+  line-height: 1;
+  pointer-events: none;
 }
 #fontMenu {
   position: absolute;
@@ -655,6 +683,16 @@ body {
   display: flex;
   gap: 6px;
   align-items: center;
+}
+#inputWrap > .iconBtn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  font-size: 15px;
 }
 #inputWrap #messageInput {
   flex: 1;
@@ -1276,7 +1314,7 @@ body:not([data-theme]) #sendButton:hover {
 [data-theme="oldschool"] #messages {
   background: #FFFFFF;
   border: 2px inset #D4D0C8;
-  padding: 4px 6px;
+  padding: 4px 0;
   gap: 0;
   font-size: 12px;
   line-height: 1.4;
@@ -1290,7 +1328,7 @@ body:not([data-theme]) #sendButton:hover {
   align-items: flex-start;
   text-align: left;
   border-bottom: none;
-  padding: 1px 6px;
+  padding: 0;
   background: transparent;
 }
 
@@ -1308,7 +1346,7 @@ body:not([data-theme]) #sendButton:hover {
   border: none !important;
   border-radius: 0 !important;
   max-width: 100%;
-  padding: 0;
+  padding: 2px 8px;
   font-size: 12px;
   line-height: 1.4;
   color: #333333;
@@ -1319,6 +1357,13 @@ body:not([data-theme]) #sendButton:hover {
   background: transparent !important;
   border-color: transparent !important;
   box-shadow: none;
+}
+[data-theme="oldschool"] .bubble .msgTime,
+[data-theme="oldschool"] .bubble strong,
+[data-theme="oldschool"] .bubble .fmtBody {
+  font-size: 12px;
+  line-height: 1.4;
+  vertical-align: baseline;
 }
 [data-theme="oldschool"] .bubble strong {
   color: #333333;
@@ -1350,7 +1395,7 @@ body:not([data-theme]) #sendButton:hover {
 [data-theme="oldschool"] .system {
   color: #458B22;
   font-size: 11px;
-  padding: 1px 0;
+  padding: 2px 8px;
   text-shadow: none;
 }
 [data-theme="oldschool"] .system::before {
@@ -1384,6 +1429,20 @@ body:not([data-theme]) #sendButton:hover {
   font-family: var(--font);
   font-size: 12px;
   padding: 3px 4px;
+}
+
+/* Message input — match the old-school inset field look */
+[data-theme="oldschool"] #inputWrap #messageInput {
+  background: #FFFFFF;
+  border: 2px inset #D4D0C8;
+  border-radius: 0;
+  color: #333333;
+  font-family: var(--font);
+  font-size: 12px;
+  padding: 4px 8px;
+  height: 36px;
+  box-sizing: border-box;
+  outline: none;
 }
 [data-theme="oldschool"] #fontSelect,
 [data-theme="oldschool"] #themeSelect,
@@ -1482,13 +1541,18 @@ body:not([data-theme]) #sendButton:hover {
   gap: 4px;
   background: #FFF9E6;
 }
-[data-theme="oldschool"] .iconBtn {
-  padding: 4px 6px;
+[data-theme="oldschool"] #inputWrap > .iconBtn,
+[data-theme="oldschool"] .fmtBtn {
+  padding: 0;
   font-size: 11px;
+}
+[data-theme="oldschool"] .fmtBtn#fmtItalic,
+[data-theme="oldschool"] .fmtBtn#fmtUnderline {
+  font-size: 14px;
 }
 [data-theme="oldschool"] #fmtFont {
   font-family: Impact, 'Arial Black', sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   letter-spacing: 1px;
 }
 /* Send button — no special styling, just normal raised */
