@@ -1011,6 +1011,10 @@ body:not([data-theme]) #sendButton:hover {
   color: #33ff33;
   margin-left: 2px;
 }
+[data-theme="retro"] .bubble .fmtBody {
+  display: inline;
+  white-space: normal;
+}
 [data-theme="retro"] .bubble > div:not(.reply):not(.msgStatus) {
   display: inline;
 }
