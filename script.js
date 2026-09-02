@@ -715,15 +715,17 @@ function renderMessage(d, isMine) {
   bubble.dataset.mid = d.id;
 
   if (d.type === "message") {
-    const time = document.createElement("span");
-    time.className = "msgTime";
-    time.textContent = formatTime(d.ts || Date.now());
-
     const name = document.createElement("strong");
     name.style.color = isValidColor(d.color) ? d.color : "var(--status)";
     name.textContent = d.username;
-    bubble.appendChild(time);
     bubble.appendChild(name);
+
+    if (document.body.dataset.theme === "oldschool") {
+      const time = document.createElement("span");
+      time.className = "msgTime";
+      time.textContent = formatTime(d.ts || Date.now());
+      bubble.insertBefore(time, name);
+    }
 
     if (d.reply) {
       const reply = document.createElement("div");

@@ -523,6 +523,10 @@ body {
   margin-right: 2px;
   white-space: nowrap;
 }
+.fmtBody {
+  display: block;
+  word-wrap: break-word;
+}
 .reply {
   background: var(--reply-bg);
   border-left: 3px solid var(--reply-border);
