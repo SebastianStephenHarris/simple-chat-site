@@ -11,6 +11,20 @@ let fmtBold = false;
 let fmtItalic = false;
 let fmtUnderline = false;
 
+const FONTS = [
+  { value: "", name: "System" },
+  { value: "Arial, Helvetica, sans-serif", name: "Arial" },
+  { value: "'Courier New', monospace", name: "Courier New" },
+  { value: "Georgia, 'Times New Roman', serif", name: "Georgia" },
+  { value: "'Comic Sans MS', 'Comic Sans', cursive", name: "Comic Sans" },
+  { value: "Tahoma, 'MS Sans Serif', sans-serif", name: "Tahoma" },
+  { value: "'Times New Roman', Times, serif", name: "Times New Roman" },
+  { value: "'Trebuchet MS', sans-serif", name: "Trebuchet MS" },
+  { value: "Verdana, Geneva, sans-serif", name: "Verdana" },
+  { value: "Impact, 'Arial Black', sans-serif", name: "Impact" },
+  { value: "'Lucida Console', Monaco, monospace", name: "Lucida Console" }
+];
+
 let missed = 0;
 let isAtBottom = true;
 const pendingSeen = new Set();
@@ -515,15 +529,19 @@ function setupEventListeners() {
   document.getElementById("sendButton").onclick = sendMessage;
 
   // Formatting bar
-  const fontSelect = document.getElementById("fontSelect");
+  const fmtFontBtn = document.getElementById("fmtFont");
   const fmtBoldBtn = document.getElementById("fmtBold");
   const fmtItalicBtn = document.getElementById("fmtItalic");
   const fmtUnderBtn = document.getElementById("fmtUnderline");
+  const fontMenu = document.getElementById("fontMenu");
 
-  fontSelect.addEventListener("change", () => { fmtFont = fontSelect.value; syncFmtButtons(); });
+  buildFontMenu(fontMenu);
+  fmtFontBtn.addEventListener("click", (e) => { e.stopPropagation(); toggleFontMenu(fontMenu, fmtFontBtn); });
   fmtBoldBtn.addEventListener("click", () => { fmtBold = !fmtBold; syncFmtButtons(); });
   fmtItalicBtn.addEventListener("click", () => { fmtItalic = !fmtItalic; syncFmtButtons(); });
   fmtUnderBtn.addEventListener("click", () => { fmtUnderline = !fmtUnderline; syncFmtButtons(); });
+
+  document.addEventListener("click", () => closeFontMenu(fontMenu, fmtFontBtn));
 
   // Prevent mobile browser from stealing focus on touch (keeps keyboard open)
   document.getElementById("sendButton").addEventListener("touchend", (e) => {
@@ -569,13 +587,55 @@ function setupEventListeners() {
 
 /* ---------------- SEND MESSAGE ---------------- */
 
+function buildFontMenu(menu) {
+  menu.innerHTML = "";
+  FONTS.forEach(f => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "fontOpt";
+    btn.dataset.font = f.value;
+    btn.textContent = f.name;
+    if (f.value) btn.style.fontFamily = f.value;
+    btn.onclick = () => {
+      fmtFont = f.value;
+      syncFmtButtons();
+      closeFontMenu(menu, document.getElementById("fmtFont"));
+    };
+    menu.appendChild(btn);
+  });
+}
+
+function toggleFontMenu(menu, button) {
+  const open = !menu.classList.contains("hidden");
+  if (open) {
+    closeFontMenu(menu, button);
+  } else {
+    menu.classList.remove("hidden");
+    button.setAttribute("aria-expanded", "true");
+  }
+}
+
+function closeFontMenu(menu, button) {
+  menu.classList.add("hidden");
+  if (button) button.setAttribute("aria-expanded", "false");
+}
+
 function syncFmtButtons() {
+  const f = document.getElementById("fmtFont");
   const b = document.getElementById("fmtBold");
   const i = document.getElementById("fmtItalic");
   const u = document.getElementById("fmtUnderline");
+  if (f) f.classList.toggle("active", !!fmtFont);
   if (b) b.classList.toggle("active", fmtBold);
   if (i) i.classList.toggle("active", fmtItalic);
   if (u) u.classList.toggle("active", fmtUnderline);
+
+  const menu = document.getElementById("fontMenu");
+  if (menu) {
+    menu.querySelectorAll(".fontOpt").forEach(o => {
+      o.classList.toggle("selected", o.dataset.font === fmtFont);
+    });
+  }
 }
 
 function currentFormat() {
@@ -643,9 +703,14 @@ function renderMessage(d, isMine) {
   bubble.dataset.mid = d.id;
 
   if (d.type === "message") {
+    const time = document.createElement("span");
+    time.className = "msgTime";
+    time.textContent = formatTime(d.ts || Date.now());
+
     const name = document.createElement("strong");
     name.style.color = isValidColor(d.color) ? d.color : "var(--status)";
     name.textContent = d.username;
+    bubble.appendChild(time);
     bubble.appendChild(name);
 
     if (d.reply) {
@@ -690,6 +755,12 @@ function renderMessage(d, isMine) {
   document.getElementById("messages").appendChild(el);
 
   if (nearBottom()) scrollToBottom();
+}
+
+function formatTime(ts) {
+  const d = new Date(ts);
+  const pad = n => String(n).padStart(2, "0");
+  return `(${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())})`;
 }
 
 function applyFmt(el, fmt) {

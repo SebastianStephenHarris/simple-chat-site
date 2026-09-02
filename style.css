@@ -516,6 +516,13 @@ body {
   background: var(--bubble-hover-bg);
   border-color: var(--bubble-hover-border);
 }
+.msgTime {
+  color: var(--muted);
+  font-size: 0.8em;
+  opacity: 0.8;
+  margin-right: 2px;
+  white-space: nowrap;
+}
 .reply {
   background: var(--reply-bg);
   border-left: 3px solid var(--reply-border);
@@ -587,13 +594,44 @@ body {
   align-items: center;
   gap: 4px;
 }
-#fontSelect {
-  flex: 1;
-  min-width: 0;
-  padding: 6px;
-  background: var(--input-bg);
-  border: 2px solid var(--input-border);
+#fmtFont {
+  font-family: Impact, 'Arial Black', sans-serif;
+  font-weight: normal;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+#fontMenu {
+  position: absolute;
+  left: 8px;
+  bottom: calc(100% + 8px);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  max-height: 45vh;
+  overflow-y: auto;
+  min-width: 170px;
+  background: var(--panel-bg);
+  border: 2px solid var(--panel-border);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  padding: 4px;
+}
+.fontOpt {
+  background: transparent;
+  border: none;
   color: var(--color);
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: var(--radius);
+}
+.fontOpt:hover {
+  background: var(--btn-hover);
+}
+.fontOpt.selected {
+  background: var(--btn-hover);
+  box-shadow: inset 0 0 0 2px var(--btn-border-soft);
 }
 .fmtBtn {
   font-weight: 900;
@@ -1146,18 +1184,18 @@ body:not([data-theme]) #sendButton:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* -------- OLD SCHOOL: Win95/98 desktop, silver bevels, plain text log -------- */
+/* -------- OLD SCHOOL: Win95/98 desktop, beige desktop, plain text log -------- */
 [data-theme="oldschool"] {
   --font: "Tahoma", "MS Sans Serif", "Arial", "Segoe UI", sans-serif;
-  --color: #000000;
-  --muted: #666666;
-  --body-bg: #C0C0C0;
-  --panel-bg: #C0C0C0;
+  --color: #333333;
+  --muted: #808080;
+  --body-bg: #FFF9E6;
+  --panel-bg: #FFF9E6;
   --panel-border: #808080;
-  --heading: #000080;
-  --btn-bg: #C0C0C0;
+  --heading: #333333;
+  --btn-bg: #FFF9E6;
   --btn-border: #808080;
-  --btn-hover: #D4D0C8;
+  --btn-hover: #EFE6C9;
   --bubble-bg: transparent;
   --bubble-border: none;
   --bubble-hover-bg: transparent;
@@ -1167,10 +1205,10 @@ body:not([data-theme]) #sendButton:hover {
   --input-border: #808080;
   --accent-grad: none;
   --btn-border-soft: #808080;
-  --status: #008000;
-  --reply-bg: #ECE9D8;
-  --reply-border: #000080;
-  --system: #008000;
+  --status: #458B22;
+  --reply-bg: #EFE6C9;
+  --reply-border: #808080;
+  --system: #458B22;
   --glow: none;
   --radius: 0px !important;
 }
@@ -1201,33 +1239,28 @@ body:not([data-theme]) #sendButton:hover {
   opacity: 0;
 }
 
-/* Username in messages — dark blue */
-[data-theme="oldschool"] .bubble strong {
-  color: #000080;
-  text-shadow: none;
-  font-weight: bold;
-}
-
 [data-theme="oldschool"] .msgStatus {
   color: #808080;
 }
 
-/* Side panel — silver raised */
+/* Side panel — beige desktop */
 [data-theme="oldschool"] #sidePanel {
   border-right: 2px solid #808080;
   padding: 4px;
-  background: #C0C0C0;
+  background: #FFF9E6;
 }
 [data-theme="oldschool"] #sidePanel h3 {
   font-size: 11px;
-  color: #000080;
+  color: #333333;
   margin: 4px 0 2px;
   letter-spacing: 0;
   text-transform: uppercase;
   text-shadow: none;
   font-weight: bold;
-  border-bottom: 1px solid #808080;
-  padding-bottom: 2px;
+  background: #EFE6C9;
+  border: 1px solid #808080;
+  padding: 3px 4px;
+  text-align: left;
 }
 [data-theme="oldschool"] #onlineList {
   font-size: 11px;
@@ -1236,7 +1269,7 @@ body:not([data-theme]) #sendButton:hover {
 [data-theme="oldschool"] .onlineItem::before {
   content: "●";
   font-size: 8px;
-  color: #008000;
+  color: #458B22;
 }
 
 /* Messages area — white, continuous text log */
@@ -1247,7 +1280,7 @@ body:not([data-theme]) #sendButton:hover {
   gap: 0;
   font-size: 12px;
   line-height: 1.4;
-  color: #000000;
+  color: #333333;
 }
 [data-theme="oldschool"] .message,
 [data-theme="oldschool"] .mine,
@@ -1257,8 +1290,13 @@ body:not([data-theme]) #sendButton:hover {
   align-items: flex-start;
   text-align: left;
   border-bottom: none;
-  padding: 0;
+  padding: 1px 6px;
   background: transparent;
+}
+
+/* Alternating row tint for readability */
+[data-theme="oldschool"] #messages > :nth-child(even) {
+  background: #FAF0D9;
 }
 
 /* Kill message bubbles — plain text log, "name: message" inline */
@@ -1273,7 +1311,7 @@ body:not([data-theme]) #sendButton:hover {
   padding: 0;
   font-size: 12px;
   line-height: 1.4;
-  color: #000000;
+  color: #333333;
   box-shadow: none;
   margin: 0;
 }
@@ -1283,15 +1321,20 @@ body:not([data-theme]) #sendButton:hover {
   box-shadow: none;
 }
 [data-theme="oldschool"] .bubble strong {
-  color: #000080;
+  color: #333333;
   font-weight: bold;
   padding-right: 4px;
   white-space: nowrap;
 }
 [data-theme="oldschool"] .bubble strong::after {
   content: ":";
-  color: #000000;
+  color: #333333;
   font-weight: normal;
+}
+[data-theme="oldschool"] .bubble .msgTime {
+  color: #808080;
+  opacity: 0.8;
+  margin-right: 4px;
 }
 [data-theme="oldschool"] .bubble .fmtBody {
   display: inline;
@@ -1303,9 +1346,9 @@ body:not([data-theme]) #sendButton:hover {
   flex-basis: 100%;
 }
 
-/* System messages — dark green */
+/* System messages — forest green */
 [data-theme="oldschool"] .system {
-  color: #008000;
+  color: #458B22;
   font-size: 11px;
   padding: 1px 0;
   text-shadow: none;
@@ -1332,13 +1375,12 @@ body:not([data-theme]) #sendButton:hover {
 [data-theme="oldschool"] #gifSearch,
 [data-theme="oldschool"] #emojiSearch,
 [data-theme="oldschool"] #renameInput,
-[data-theme="oldschool"] #fontSelect,
 [data-theme="oldschool"] #themeSelect,
 [data-theme="oldschool"] #serverSelect {
   background: #FFFFFF;
   border: 2px inset #D4D0C8;
   border-radius: 0;
-  color: #000000;
+  color: #333333;
   font-family: var(--font);
   font-size: 12px;
   padding: 3px 4px;
@@ -1347,23 +1389,48 @@ body:not([data-theme]) #sendButton:hover {
 [data-theme="oldschool"] #themeSelect,
 [data-theme="oldschool"] #serverSelect {
   background: #FFFFFF;
-  color: #000000;
+  color: #333333;
   border: 2px inset #D4D0C8;
   border-radius: 0;
   font-family: var(--font);
+  font-size: 12px;
 }
 
-/* Buttons — silver raised bevel */
+/* Font menu — raised panel */
+[data-theme="oldschool"] #fontMenu {
+  background: #FFF9E6;
+  border: 2px outset #EFE6C9;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
+  border-radius: 0;
+  padding: 2px;
+}
+[data-theme="oldschool"] #fontMenu .fontOpt {
+  color: #333333;
+  background: transparent;
+  text-align: left;
+  padding: 5px 10px;
+  font-size: 14px;
+}
+[data-theme="oldschool"] #fontMenu .fontOpt:hover {
+  background: #333333;
+  color: #FFFFFF;
+}
+[data-theme="oldschool"] #fontMenu .fontOpt.selected {
+  box-shadow: inset 0 0 0 2px #808080;
+}
+
+/* Buttons — beige raised bevel */
 [data-theme="oldschool"] .loginScreen button,
 [data-theme="oldschool"] #sidePanel button,
 [data-theme="oldschool"] .iconBtn,
 [data-theme="oldschool"] #gifPicker button,
 [data-theme="oldschool"] #replyBar button {
-  background: #C0C0C0;
-  color: #000000;
+  background: #EFE6C9;
+  color: #333333;
   border: 2px outset #FFFFFF;
-  border-right-color: #404040;
-  border-bottom-color: #404040;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
   border-radius: 0;
   text-shadow: none;
   font-family: var(--font);
@@ -1377,109 +1444,114 @@ body:not([data-theme]) #sendButton:hover {
 [data-theme="oldschool"] #gifPicker button:active,
 [data-theme="oldschool"] #replyBar button:active {
   border: 2px inset #FFFFFF;
-  border-right-color: #FFFFFF;
-  border-bottom-color: #FFFFFF;
+  border-right-color: #333333;
+  border-bottom-color: #333333;
   padding: 5px 9px 3px 11px;
 }
 [data-theme="oldschool"] .loginScreen button {
-  background: #C0C0C0;
-  color: #000000;
+  background: #EFE6C9;
+  color: #333333;
   border: 2px outset #FFFFFF;
-  border-right-color: #404040;
-  border-bottom-color: #404040;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
   font-weight: bold;
 }
 [data-theme="oldschool"] .loginScreen button:active {
   border: 2px inset #FFFFFF;
-  border-right-color: #FFFFFF;
-  border-bottom-color: #FFFFFF;
+  border-right-color: #333333;
+  border-bottom-color: #333333;
 }
 
-/* Login screen — silver desktop */
+/* Login screen — warm beige desktop */
 [data-theme="oldschool"] .loginScreen {
-  background: #C0C0C0;
+  background: #FFF9E6;
 }
 [data-theme="oldschool"] .loginScreen h2 {
   font-size: 14px;
   letter-spacing: 0;
   text-transform: none;
   text-shadow: none;
-  color: #000080;
+  color: #333333;
   font-weight: bold;
 }
 
-/* Input bar — silver raised */
+/* Input bar — beige raised */
 [data-theme="oldschool"] #inputBar {
-  border-top: 2px solid #FFFFFF;
+  border-top: 2px solid #EFE6C9;
   padding: 4px;
   gap: 4px;
-  background: #C0C0C0;
+  background: #FFF9E6;
 }
 [data-theme="oldschool"] .iconBtn {
   padding: 4px 6px;
   font-size: 11px;
+}
+[data-theme="oldschool"] #fmtFont {
+  font-family: Impact, 'Arial Black', sans-serif;
+  font-size: 15px;
+  letter-spacing: 1px;
 }
 /* Send button — no special styling, just normal raised */
 [data-theme="oldschool"] #sendButton {
   font-weight: normal;
   text-transform: none;
   letter-spacing: 0;
-  background: #C0C0C0;
-  color: #000000;
+  background: #EFE6C9;
+  color: #333333;
   border: 2px outset #FFFFFF;
-  border-right-color: #404040;
-  border-bottom-color: #404040;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
 }
 [data-theme="oldschool"] #sendButton:active {
   border: 2px inset #FFFFFF;
-  border-right-color: #FFFFFF;
-  border-bottom-color: #FFFFFF;
+  border-right-color: #333333;
+  border-bottom-color: #333333;
 }
 
 /* Reply bar */
 [data-theme="oldschool"] #replyBar {
   border-top: 2px inset #D4D0C8;
   border-bottom: 2px inset #D4D0C8;
-  background: #C0C0C0;
+  background: #FFF9E6;
   font-size: 11px;
 }
 
-/* Emoji / GIF pickers — silver panels */
+/* Emoji / GIF pickers — beige panels */
 [data-theme="oldschool"] #emojiPicker,
 [data-theme="oldschool"] #gifPicker {
-  border: 2px outset #FFFFFF;
-  border-right-color: #404040;
-  border-bottom-color: #404040;
+  border: 2px outset #EFE6C9;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
   border-radius: 0;
-  background: #C0C0C0;
+  background: #FFF9E6;
 }
 [data-theme="oldschool"] #emojiPickerHeader {
   border-bottom: 1px solid #808080;
-  background: #C0C0C0;
+  background: #EFE6C9;
 }
 
-/* Scrollbars — Win95 style */
+/* Scrollbars — Win95 style, beige */
 [data-theme="oldschool"] ::-webkit-scrollbar {
   width: 16px;
   height: 16px;
 }
 [data-theme="oldschool"] ::-webkit-scrollbar-track {
-  background: repeating-conic-gradient(#C0C0C0 0% 25%, #FFFFFF 0% 50%) 50% / 2px 2px;
+  background: repeating-conic-gradient(#EFE6C9 0% 25%, #FFFFFF 0% 50%) 50% / 2px 2px;
 }
 [data-theme="oldschool"] ::-webkit-scrollbar-thumb {
-  background: #C0C0C0;
+  background: #EFE6C9;
   border: 2px outset #FFFFFF;
-  border-right-color: #404040;
-  border-bottom-color: #404040;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
 }
 [data-theme="oldschool"] ::-webkit-scrollbar-thumb:hover {
   background: #D4D0C8;
 }
 [data-theme="oldschool"] ::-webkit-scrollbar-button {
-  background: #C0C0C0;
+  background: #EFE6C9;
   border: 2px outset #FFFFFF;
-  border-right-color: #404040;
-  border-bottom-color: #404040;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
   display: block;
   height: 16px;
 }
@@ -1500,13 +1572,13 @@ body:not([data-theme]) #sendButton:hover {
 
 /* Profile */
 [data-theme="oldschool"] #profile {
-  border: 2px outset #FFFFFF;
-  border-right-color: #404040;
-  border-bottom-color: #404040;
+  border: 2px outset #EFE6C9;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
   font-size: 11px;
-  background: #C0C0C0;
+  background: #FFF9E6;
 }
 [data-theme="oldschool"] #profileName {
-  color: #000080;
+  color: #458B22;
   text-shadow: none;
 }
