@@ -21,17 +21,31 @@ const MAX_TEXT_LENGTH = 2000;
 /* NOTE: GIPHY key is intentionally client-side for now (per owner). */
 const GIPHY_API_KEY = "vGT7vYYyy7T9iynVwVU3AIJ4rr4V6Phg";
 
-/* Override with window.WS_URL in dev or on a custom deployment. */
-const WS_URL =
-  window.WS_URL ||
-  (location.protocol === "https:"
-    ? "wss://simple-chat-backend-1rop.onrender.com"
-    : "ws://localhost:3000");
+/* Override with window.WS_URL to force a specific backend. */
+const DEFAULT_RENDER_URL = "wss://simple-chat-backend-1rop.onrender.com";
+const DEFAULT_LOCAL_URL = "ws://localhost:3000";
+
+function backendSetting() {
+  if (window.WS_URL) return { mode: "override", url: window.WS_URL, label: "Custom" };
+
+  const saved = STORE.get(STORE.backend);
+  if (saved === "local") return { mode: "local", url: DEFAULT_LOCAL_URL, label: "Local" };
+  if (saved === "render") return { mode: "render", url: DEFAULT_RENDER_URL, label: "Render" };
+  if (saved && /^wss?:\/\//i.test(saved)) return { mode: "custom", url: saved, label: "Custom" };
+
+  const onHttps = location.protocol === "https:";
+  return {
+    mode: "auto",
+    url: onHttps ? DEFAULT_RENDER_URL : DEFAULT_LOCAL_URL,
+    label: onHttps ? "Render (auto)" : "Local (auto)"
+  };
+}
 
 const STORE = {
   name: "cc_username",
   color: "cc_color",
   theme: "cc_theme",
+  backend: "cc_backend",
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch {} }
 };
@@ -67,6 +81,50 @@ function buildThemeSelect() {
   });
   select.value = STORE.get(STORE.theme) || "default";
   select.onchange = () => applyTheme(select.value);
+}
+
+/* ---------------- SERVER SELECT ---------------- */
+
+function buildServerSelect() {
+  const sel = document.getElementById("serverSelect");
+  if (!sel) return;
+
+  const opts = [
+    ["auto", "Auto"],
+    ["local", "Local (localhost:3000)"],
+    ["render", "Render (deployed)"],
+    ["custom", "Custom URL…"]
+  ];
+
+  sel.innerHTML = "";
+  opts.forEach(([v, label]) => {
+    const o = document.createElement("option");
+    o.value = v;
+    o.textContent = label;
+    sel.appendChild(o);
+  });
+
+  const current = backendSetting();
+  sel.value = current.mode === "auto" || current.mode === "override" ? "auto" : current.mode;
+
+  sel.onchange = () => {
+    const v = sel.value;
+    if (v === "custom") {
+      const u = prompt(
+        "WebSocket URL (ws:// or wss://).\nTip: for GitHub Pages you need wss:// from a tunnel like ngrok/cloudflared.",
+        current.mode === "custom" ? current.url : ""
+      );
+      if (u && /^wss?:\/\//i.test(u.trim())) {
+        STORE.set(STORE.backend, u.trim());
+      } else {
+        sel.value = current.mode === "auto" || current.mode === "override" ? "auto" : current.mode;
+        return;
+      }
+    } else {
+      STORE.set(STORE.backend, v);
+    }
+    location.reload();
+  };
 }
 
 /* ---------------- EMOJI DATA ---------------- */
@@ -243,11 +301,26 @@ function setProfile() {
 
 /* ---------------- CONNECTION ---------------- */
 
+let reconnectDelay = 2000;
+let reconnectTimer = null;
+
 function connect() {
-  setStatusHint("Connecting...");
-  ws = new WebSocket(WS_URL);
+  if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
+
+  const setting = backendSetting();
+
+  if (location.protocol === "https:" && /^ws:\/\//i.test(setting.url)) {
+    setStatusHint("That backend isn't reachable from https (mixed content) — pick Render or a wss tunnel");
+    clearTimeout(reconnectTimer);
+    reconnectTimer = setTimeout(connect, 15000);
+    return;
+  }
+
+  setStatusHint(`Connecting to ${setting.label}…`);
+  ws = new WebSocket(setting.url);
 
   ws.onopen = () => {
+    reconnectDelay = 2000;
     setStatusHint("");
     sendPayload({ type: "join", username, color: userColor });
   };
@@ -291,11 +364,27 @@ function connect() {
 
   ws.onerror = () => setStatusHint("Connection error");
 
-  ws.onclose = () => {
-    setStatusHint("Disconnected — reconnecting...");
-    setTimeout(connect, 2000);
-  };
+  ws.onclose = () => scheduleReconnect();
 }
+
+function scheduleReconnect() {
+  clearTimeout(reconnectTimer);
+
+  if (document.hidden) {
+    setStatusHint("Disconnected — will reconnect when you return");
+    return;
+  }
+
+  setStatusHint("Disconnected — reconnecting…");
+  reconnectTimer = setTimeout(connect, reconnectDelay);
+  reconnectDelay = Math.min(reconnectDelay * 2, 30000);
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden || !ws || ws.readyState !== WebSocket.CLOSED) return;
+  reconnectDelay = 2000;
+  connect();
+});
 
 function setStatusHint(text) {
   statusHint = text;
@@ -859,6 +948,7 @@ function clearReply() {
 
 (function init() {
   buildThemeSelect();
+  buildServerSelect();
   applyTheme(STORE.get(STORE.theme) || "default");
 
   const savedName = STORE.get(STORE.name);
