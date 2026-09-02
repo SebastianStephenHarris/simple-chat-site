@@ -47,6 +47,7 @@ const STORE = {
   color: "cc_color",
   theme: "cc_theme",
   backend: "cc_backend",
+  notify: "cc_notify",
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch {} }
 };
@@ -281,6 +282,8 @@ function enterChat() {
   setupEventListeners();
   setProfile();
   connect();
+
+  if (pushEnabled()) requestPushPermission();
 }
 
 function logout() {
@@ -324,6 +327,7 @@ function connect() {
     reconnectDelay = 2000;
     setStatusHint("");
     sendPayload({ type: "join", username, color: userColor });
+    if (pendingPushSub) sendPayload({ type: "subscribe", subscription: pendingPushSub });
   };
 
   ws.onmessage = e => {
@@ -335,6 +339,9 @@ function connect() {
       case "welcome":
         myClientId = data.clientId;
         renderOnline(data.users || []);
+        if (Array.isArray(data.history)) {
+          data.history.forEach(m => renderMessage(m, m.senderId === data.clientId));
+        }
         break;
       case "online":
         renderOnline(data.users || []);
@@ -1004,4 +1011,131 @@ if ("serviceWorker" in navigator) {
       .then(registration => registration.update())
       .catch(() => {});
   });
+}
+
+/* ---------------- PUSH NOTIFICATIONS ---------------- */
+
+let pendingPushSub = null;
+let vapidCache = { origin: "", key: null };
+
+function pushEnabled() {
+  return STORE.get(STORE.notify) === "1";
+}
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const raw = atob(base64);
+  const bytes = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  return bytes;
+}
+
+function pushBackendOrigin() {
+  const raw = backendSetting().url;
+  const protocol = /^wss:/i.test(raw) ? "https:" : /^ws:/i.test(raw) ? "http:" : "https:";
+  return protocol + "//" + raw.replace(/^wss?:\/\//i, "").split("/")[0];
+}
+
+async function fetchVapidKey() {
+  const origin = pushBackendOrigin();
+  if (vapidCache.origin === origin && vapidCache.key) return vapidCache.key;
+  try {
+    const res = await fetch(origin + "/vapid-public", { cache: "no-store" });
+    if (!res.ok) return null;
+    const json = await res.json();
+    if (!json || typeof json.key !== "string" || !json.key) return null;
+    vapidCache = { origin, key: json.key };
+    return json.key;
+  } catch {
+    return null;
+  }
+}
+
+async function sendPushSubscription(sub) {
+  if (!sub || !sub.endpoint) return;
+  let keys = {};
+  try { keys = sub.toJSON().keys || {}; } catch {}
+  pendingPushSub = { endpoint: sub.endpoint, keys };
+  sendPayload({ type: "subscribe", subscription: pendingPushSub });
+}
+
+async function ensurePushSubscription() {
+  if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
+  if (Notification.permission !== "granted") return;
+  try {
+    let registration = await navigator.serviceWorker.getRegistration();
+    if (!registration) registration = await navigator.serviceWorker.ready;
+    const existing = await registration.pushManager.getSubscription();
+    if (existing) {
+      await sendPushSubscription(existing);
+      return;
+    }
+    const key = await fetchVapidKey();
+    if (!key) return;
+    const sub = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(key)
+    });
+    await sendPushSubscription(sub);
+  } catch {}
+}
+
+async function disablePush() {
+  if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+    pendingPushSub = null;
+    return;
+  }
+  try {
+    const registration = await navigator.serviceWorker.getRegistration();
+    const sub = registration && await registration.pushManager.getSubscription();
+    if (sub) {
+      const endpoint = sub.endpoint;
+      await sub.unsubscribe().catch(() => {});
+      sendPayload({ type: "unsubscribe", endpoint });
+    }
+    pendingPushSub = null;
+  } catch {}
+}
+
+async function requestPushPermission() {
+  if (!("Notification" in window)) return;
+  if (Notification.permission === "default") {
+    try { await Notification.requestPermission(); } catch {}
+  }
+  if (Notification.permission === "granted") ensurePushSubscription();
+}
+
+function wireNotifyToggle() {
+  const toggle = document.getElementById("notifyToggle");
+  if (!toggle) return;
+  toggle.checked = pushEnabled();
+  toggle.onchange = () => {
+    if (toggle.checked) {
+      STORE.set(STORE.notify, "1");
+      requestPushPermission();
+    } else {
+      STORE.set(STORE.notify, "");
+      disablePush();
+    }
+  };
+}
+
+if ("Notification" in window &&
+    navigator.permissions &&
+    navigator.permissions.query) {
+  navigator.permissions.query({ name: "notifications" })
+    .then(status => {
+      status.addEventListener("change", () => {
+        if (Notification.permission === "granted" && pushEnabled()) ensurePushSubscription();
+        else if (Notification.permission === "denied") disablePush();
+      });
+    })
+    .catch(() => {});
+}
+
+wireNotifyToggle();
+
+if (pushEnabled() && ("Notification" in window) && Notification.permission === "granted") {
+  ensurePushSubscription();
 }
