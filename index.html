@@ -2,7 +2,8 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Simple Web Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chatroom</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -11,9 +12,10 @@
 <!-- LOGIN -->
 <div id="login" class="loginScreen">
   <h2>Enter Username</h2>
-  <input id="username" placeholder="Username" />
+  <input id="username" placeholder="Username" maxlength="32" />
   <input id="color" type="color" value="#ff66ff" />
   <button onclick="enterChat()">Enter Chat</button>
+  <p id="loginHint" class="loginHint hidden"></p>
 </div>
 
 <!-- CHAT -->
@@ -21,7 +23,23 @@
 
   <!-- SIDE PANEL -->
   <div id="sidePanel">
+
+    <div id="profile">
+      <span id="profileName"></span>
+      <button id="renameBtn" title="Change username" onclick="toggleRename()">✏️</button>
+    </div>
+
+    <div id="renameBox" class="hidden">
+      <input id="renameInput" placeholder="New username" maxlength="32" />
+      <button onclick="saveRename()">Save</button>
+      <button onclick="toggleRename()">✕</button>
+    </div>
+
+    <h3>Online</h3>
+    <div id="onlineList"></div>
+
     <h3>Emoji</h3>
+    <input id="emojiSearch" placeholder="Search emoji..." maxlength="40" />
     <div id="emojiList"></div>
 
     <h3>Emoticons</h3>
@@ -29,6 +47,10 @@
 
     <h3>Reactions</h3>
     <div id="reactionList"></div>
+
+    <h3>Theme</h3>
+    <select id="themeSelect"></select>
+
   </div>
 
   <!-- MAIN CHAT -->
@@ -45,18 +67,18 @@
     <!-- INPUT BAR -->
     <div id="inputBar">
 
-      <button class="iconBtn" onclick="triggerImageUpload()">📷</button>
-      <button class="iconBtn" onclick="toggleGifPicker()">GIF</button>
+      <button class="iconBtn" type="button" onclick="triggerImageUpload()">📷</button>
+      <button class="iconBtn" type="button" onclick="toggleGifPicker()">GIF</button>
 
-      <input id="messageInput" placeholder="Message..." />
+      <input id="messageInput" placeholder="Message..." maxlength="2000" />
 
-      <button id="sendButton">Send</button>
+      <button id="sendButton" type="button">Send</button>
     </div>
 
     <!-- GIF PANEL -->
     <div id="gifPicker" class="hidden">
-      <input id="gifSearch" placeholder="Search GIFs..." />
-      <button onclick="searchGifs()">Search</button>
+      <input id="gifSearch" placeholder="Search GIFs..." maxlength="100" />
+      <button type="button" onclick="searchGifs()">Search</button>
       <div id="gifResults"></div>
     </div>
 
