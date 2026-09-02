@@ -440,7 +440,7 @@ function setupEventListeners() {
   window.addEventListener("focus", onUserActive);
 
   const emojiSearch = document.getElementById("emojiSearch");
-  emojiSearch.addEventListener("input", renderEmojiBrowser);
+  emojiSearch.addEventListener("input", renderEmojiPicker);
 }
 
 /* ---------------- SEND MESSAGE ---------------- */
@@ -633,6 +633,9 @@ async function searchGifs() {
 }
 
 function toggleGifPicker() {
+  const emoji = document.getElementById("emojiPicker");
+  if (emoji && !emoji.classList.contains("hidden")) emoji.classList.add("hidden");
+
   const el = document.getElementById("gifPicker");
   el.classList.toggle("hidden");
 
@@ -645,8 +648,6 @@ function toggleGifPicker() {
 /* ---------------- SIDE PANEL ---------------- */
 
 function buildSidePanel() {
-  renderEmojiBrowser();
-
   const emoBox = document.getElementById("emoticonList");
   const reactionBox = document.getElementById("reactionList");
   emoBox.innerHTML = "";
@@ -700,42 +701,101 @@ function insertText(text) {
   input.focus();
 }
 
-/* ---------------- EMOJI BROWSER ---------------- */
+/* ---------------- EMOJI PICKER ---------------- */
 
-function renderEmojiBrowser() {
+const RECENT_EMOJI_KEY = "cc_emoji";
+
+function getRecentEmojis() {
+  try {
+    const raw = STORE.get(RECENT_EMOJI_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr.filter(e => typeof e === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+function addRecentEmoji(e) {
+  const list = getRecentEmojis().filter(x => x !== e);
+  list.unshift(e);
+  STORE.set(RECENT_EMOJI_KEY, JSON.stringify(list.slice(0, 30)));
+}
+
+function renderEmojiPicker() {
   const q = document.getElementById("emojiSearch").value.trim().toLowerCase();
-  const box = document.getElementById("emojiList");
+  const box = document.getElementById("emojiPickerBody");
   box.innerHTML = "";
 
   if (q) {
+    const shown = new Map();
     EMOJI_CATS.forEach(cat => {
       cat.items.forEach(([e, k]) => {
-        if ((e + " " + k + " " + cat.cat).toLowerCase().includes(q)) {
+        if ((e + " " + k + " " + cat.cat).toLowerCase().includes(q) && !shown.has(e)) {
+          shown.set(e, true);
           box.appendChild(emojiButton(e));
         }
       });
     });
-    if (!box.children.length) {
-      box.innerHTML = "<p style='font-size:12px;opacity:.6'>No emoji found</p>";
+
+    if (!shown.size) {
+      const p = document.createElement("p");
+      p.style.fontSize = "12px";
+      p.style.opacity = "0.6";
+      p.textContent = "No emoji found";
+      box.appendChild(p);
     }
     return;
   }
 
+  const recents = getRecentEmojis();
+  if (recents.length) {
+    box.appendChild(sectionHeader("Recently used"));
+    recents.forEach(e => box.appendChild(emojiButton(e)));
+  }
+
   EMOJI_CATS.forEach(cat => {
-    const label = document.createElement("div");
-    label.className = "emojiCat";
-    label.textContent = cat.cat;
-    box.appendChild(label);
+    box.appendChild(sectionHeader(cat.cat));
     cat.items.forEach(([e]) => box.appendChild(emojiButton(e)));
   });
+}
+
+function sectionHeader(text) {
+  const label = document.createElement("div");
+  label.className = "emojiCat";
+  label.textContent = text;
+  return label;
 }
 
 function emojiButton(e) {
   const b = document.createElement("button");
   b.type = "button";
   b.textContent = e;
-  b.onclick = () => insertText(e);
+  b.title = e;
+  b.onmousedown = ev => ev.preventDefault(); // keep message input focused/caret intact
+  b.onclick = () => {
+    insertText(e);
+    addRecentEmoji(e);
+    // Refresh only when browsing (not searching) so the recents row updates
+    if (!document.getElementById("emojiSearch").value.trim()) {
+      renderEmojiPicker();
+      const box = document.getElementById("emojiPickerBody");
+      box.scrollTop = 0;
+    }
+  };
   return b;
+}
+
+function toggleEmojiPicker() {
+  const gif = document.getElementById("gifPicker");
+  if (gif && !gif.classList.contains("hidden")) gif.classList.add("hidden");
+
+  const picker = document.getElementById("emojiPicker");
+  picker.classList.toggle("hidden");
+  if (!picker.classList.contains("hidden")) {
+    document.getElementById("emojiSearch").value = "";
+    renderEmojiPicker();
+    document.getElementById("emojiSearch").focus();
+  }
 }
 
 /* ---------------- RENAME ---------------- */

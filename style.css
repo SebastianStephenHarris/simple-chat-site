@@ -348,26 +348,74 @@ body {
 .onlineMe {
   opacity: 0.6;
 }
-#emojiList {
+#emojiPicker {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: calc(100% + 10px);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  max-height: 45vh;
+  overflow: hidden;
+  background: var(--panel-bg);
+  border: 2px solid var(--panel-border);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.55);
+}
+#emojiPickerHeader {
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  border-bottom: 1px solid var(--panel-border);
+  flex-shrink: 0;
+  background: var(--panel-bg);
+}
+#emojiPickerHeader input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--color);
+  font-family: var(--font);
+}
+#emojiPickerHeader button {
+  background: transparent;
+  border: none;
+  color: var(--status);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 6px;
+}
+#emojiPickerBody {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 4px;
+  padding: 8px;
+  overflow-y: auto;
+  align-content: flex-start;
+}
+#emojiPickerBody button {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  line-height: 1.2;
+  padding: 2px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+#emojiPickerBody button:hover {
+  background: var(--btn-hover);
+  transform: scale(1.15);
 }
 .emojiCat {
   width: 100%;
   font-size: 11px;
   color: var(--heading);
   margin: 6px 0 2px;
+  letter-spacing: 0.5px;
 }
-#emojiSearch {
-  width: 100%;
-  padding: 6px;
-  background: var(--input-bg);
-  border: 1px solid var(--input-border);
-  color: var(--color);
-  margin-bottom: 6px;
-}
-#emojiList button,
 #emoticonList button,
 #reactionList button {
   background: var(--btn-bg);
@@ -375,10 +423,6 @@ body {
   color: var(--color);
   font-size: 12px;
   padding: 4px;
-}
-#emojiList button {
-  font-size: 18px;
-  line-height: 1;
 }
 #emoticonList,
 #reactionList {
@@ -498,6 +542,7 @@ body {
 
 /* ---------------- INPUT BAR ---------------- */
 #inputBar {
+  position: relative;
   display: flex;
   gap: 6px;
   padding: 10px;
@@ -596,4 +641,295 @@ body {
 ::-webkit-scrollbar-thumb {
   background: var(--panel-border);
   border-radius: 5px;
+}
+
+/* ============================== THEME DEEP-DIVES ============================== */
+/* Extra flavour stacked on top of the base variable palette. */
+
+/* -------- Default neon: subtle glow polish -------- */
+body:not([data-theme]) #sidePanel h3 {
+  text-shadow: 0 0 10px rgba(255, 102, 255, 0.25);
+}
+body:not([data-theme]) .bubble:hover {
+  box-shadow: 0 0 14px rgba(255, 102, 255, 0.25);
+}
+body:not([data-theme]) #sendButton:hover {
+  box-shadow: 0 0 16px rgba(255, 51, 255, 0.55);
+}
+
+/* -------- RETRO TERMINAL: full CRT/IRC treatment -------- */
+[data-theme="retro"] body {
+  background: repeating-linear-gradient(0deg, rgba(0, 255, 0, 0.05) 0 1px, transparent 1px 3px), #000000;
+}
+@keyframes crtFlicker {
+  0%, 100% { opacity: 1; }
+  3% { opacity: 0.96; }
+  6% { opacity: 0.99; }
+  9% { opacity: 0.965; }
+  12% { opacity: 1; }
+  54% { opacity: 0.985; }
+  57% { opacity: 0.96; }
+  60% { opacity: 1; }
+}
+[data-theme="retro"] .chatLayout,
+[data-theme="retro"] .loginScreen {
+  animation: crtFlicker 4s infinite;
+}
+[data-theme="retro"] #sidePanel {
+  background: #000000;
+}
+[data-theme="retro"] #sidePanel h3 {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: bold;
+  border-bottom: 1px dashed #33ff33;
+  padding-bottom: 3px;
+}
+[data-theme="retro"] #sidePanel h3::before {
+  content: "> ";
+  color: #33ff33;
+}
+
+/* IRC-style messages: no boxes, alice> text */
+[data-theme="retro"] .message {
+  display: block;
+}
+[data-theme="retro"] .mine {
+  justify-content: flex-start;
+}
+[data-theme="retro"] .bubble {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  max-width: 100%;
+  padding: 1px 10px;
+  font-size: 13px;
+}
+[data-theme="retro"] .bubble:hover {
+  background: #050505;
+}
+[data-theme="retro"] .bubble strong {
+  display: inline;
+  color: #00ffcc;
+  font-weight: bold;
+  margin-right: 4px;
+}
+[data-theme="retro"] .bubble strong::after {
+  content: ">";
+  color: #33ff33;
+  margin-left: 2px;
+}
+[data-theme="retro"] .bubble > div:not(.reply):not(.msgStatus) {
+  display: inline;
+}
+[data-theme="retro"] .bubble .reply {
+  display: block;
+  background: #000000;
+  border-left: 3px solid #00ffcc;
+  color: #00ffcc;
+  font-style: normal;
+}
+[data-theme="retro"] .bubble .msgStatus {
+  display: block;
+  text-align: left;
+  color: #33ff33;
+  opacity: 0.9;
+}
+[data-theme="retro"] .system {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 11px;
+}
+[data-theme="retro"] .system::before {
+  content: "── ";
+  color: #33ff33;
+}
+[data-theme="retro"] .system::after {
+  content: " ──";
+  color: #33ff33;
+}
+[data-theme="retro"] .chatImage,
+[data-theme="retro"] .gifThumb {
+  border: 1px solid #33ff33;
+}
+[data-theme="retro"] #messageInput {
+  caret-color: #33ff33;
+}
+[data-theme="retro"] #typing::after {
+  content: "▮";
+  margin-left: 4px;
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* -------- CYBERPUNK: neon grid, flicker, angular chrome -------- */
+[data-theme="cyberpunk"] body {
+  background:
+    linear-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 229, 255, 0.05) 1px, transparent 1px),
+    radial-gradient(circle at 20% 0%, #0b0f2a, #05060f);
+  background-size: 42px 42px, 42px 42px, auto;
+}
+@keyframes neonFlicker {
+  0%, 19%, 21%, 23%, 80%, 100% { opacity: 1; }
+  20% { opacity: 0.5; }
+  22% { opacity: 0.3; }
+  90% { opacity: 0.85; }
+  92% { opacity: 1; }
+}
+[data-theme="cyberpunk"] #sidePanel h3 {
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 0 0 6px #00e5ff, 0 0 16px #00e5ff;
+  animation: neonFlicker 5s infinite;
+}
+[data-theme="cyberpunk"] .iconBtn,
+[data-theme="cyberpunk"] #sendButton,
+[data-theme="cyberpunk"] #sidePanel button {
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+[data-theme="cyberpunk"] #sendButton {
+  background: linear-gradient(90deg, #00e5ff, #ff2bd6);
+  color: #05060f;
+  font-weight: 700;
+  text-shadow: none;
+}
+[data-theme="cyberpunk"] .iconBtn,
+[data-theme="cyberpunk"] #sidePanel button {
+  background: #0b1026;
+  color: #e0f7ff;
+}
+[data-theme="cyberpunk"] .iconBtn:hover,
+[data-theme="cyberpunk"] #sidePanel button:hover {
+  border-color: #ff2bd6;
+  box-shadow: 0 0 10px #00e5ff;
+}
+[data-theme="cyberpunk"] #sendButton:hover {
+  box-shadow: 0 0 18px rgba(255, 43, 214, 0.7);
+  filter: none;
+}
+[data-theme="cyberpunk"] .bubble {
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.2), inset 0 0 18px rgba(255, 43, 214, 0.06);
+}
+[data-theme="cyberpunk"] .bubble:hover {
+  box-shadow: 0 0 18px rgba(255, 43, 214, 0.45);
+}
+[data-theme="cyberpunk"] .chatImage {
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
+[data-theme="cyberpunk"] .msgStatus,
+[data-theme="cyberpunk"] #typing {
+  text-shadow: 0 0 8px #ff70e0;
+}
+[data-theme="cyberpunk"] .system {
+  text-shadow: 0 0 10px #9adcff;
+}
+
+/* -------- MIDNIGHT: starfield + frosted glass -------- */
+[data-theme="midnight"] body {
+  background:
+    radial-gradient(1px 1px at 20% 15%, rgba(255, 255, 255, 0.8), transparent 50%),
+    radial-gradient(1px 1px at 35% 40%, rgba(255, 255, 255, 0.6), transparent 50%),
+    radial-gradient(1.5px 1.5px at 55% 22%, rgba(255, 255, 255, 0.7), transparent 50%),
+    radial-gradient(1px 1px at 75% 55%, rgba(255, 255, 255, 0.5), transparent 50%),
+    radial-gradient(1px 1px at 88% 18%, rgba(255, 255, 255, 0.8), transparent 50%),
+    radial-gradient(1.5px 1.5px at 45% 75%, rgba(255, 255, 255, 0.5), transparent 50%),
+    linear-gradient(160deg, #0b1220, #141a2e);
+  background-size: 60px 60px, 80px 80px, 90px 90px, 100px 100px, 70px 70px, 120px 120px, auto;
+}
+[data-theme="midnight"] #sidePanel,
+[data-theme="midnight"] #inputBar,
+[data-theme="midnight"] #gifPicker,
+[data-theme="midnight"] #replyBar,
+[data-theme="midnight"] #emojiPicker {
+  background: rgba(14, 21, 38, 0.72);
+  backdrop-filter: blur(8px);
+}
+[data-theme="midnight"] #messages {
+  background: rgba(10, 16, 31, 0.4);
+}
+[data-theme="midnight"] .bubble {
+  background: rgba(22, 32, 58, 0.8);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(91, 127, 192, 0.55);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+}
+[data-theme="midnight"] .bubble:hover {
+  background: rgba(29, 42, 74, 0.85);
+  box-shadow: 0 8px 28px rgba(91, 127, 192, 0.25);
+}
+[data-theme="midnight"] #sidePanel h3 {
+  text-shadow: 0 0 12px rgba(143, 183, 255, 0.6);
+}
+
+/* -------- LIGHT: airy daylight, pills and soft depth -------- */
+[data-theme="light"] body {
+  background:
+    radial-gradient(600px 300px at 20% -10%, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(500px 300px at 90% 0%, rgba(196, 94, 232, 0.18), transparent),
+    linear-gradient(160deg, #faf7ff, #efe6f8);
+}
+[data-theme="light"] #sidePanel,
+[data-theme="light"] #inputBar,
+[data-theme="light"] #gifPicker,
+[data-theme="light"] #replyBar,
+[data-theme="light"] #emojiPicker,
+[data-theme="light"] #emojiPickerHeader {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+}
+[data-theme="light"] #messages {
+  background: rgba(239, 231, 248, 0.5);
+}
+[data-theme="light"] .bubble {
+  border-radius: 16px;
+  box-shadow: 0 5px 14px rgba(58, 47, 74, 0.14);
+}
+[data-theme="light"] .bubble:hover {
+  box-shadow: 0 8px 18px rgba(58, 47, 74, 0.22);
+}
+[data-theme="light"] .loginScreen button,
+[data-theme="light"] #sendButton {
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(196, 94, 232, 0.35);
+}
+[data-theme="light"] .iconBtn,
+[data-theme="light"] #sidePanel button {
+  border-radius: 999px;
+}
+[data-theme="light"] #sidePanel h3 {
+  letter-spacing: 0.5px;
+}
+
+/* -------- FOREST: layered canopy, mossy glow -------- */
+[data-theme="forest"] body {
+  background:
+    radial-gradient(700px 420px at 85% -5%, rgba(127, 217, 166, 0.14), transparent 70%),
+    radial-gradient(600px 420px at 0% 100%, rgba(47, 107, 71, 0.25), transparent 70%),
+    linear-gradient(160deg, #0d1a12, #132a1c);
+}
+[data-theme="forest"] #sidePanel {
+  background: linear-gradient(180deg, #0f1f15, #0c1810);
+}
+[data-theme="forest"] #sidePanel h3 {
+  letter-spacing: 1px;
+}
+[data-theme="forest"] #sidePanel h3::after {
+  content: " ❧";
+  color: #7fd9a6;
+}
+[data-theme="forest"] .bubble {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(127, 217, 166, 0.06);
+}
+[data-theme="forest"] .bubble:hover {
+  box-shadow: 0 8px 20px rgba(78, 168, 110, 0.35);
+}
+[data-theme="forest"] #sidePanel button:hover {
+  border-color: #7fd9a6;
+  box-shadow: 0 0 8px rgba(127, 217, 166, 0.4);
+}
+[data-theme="forest"] .chatImage {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }

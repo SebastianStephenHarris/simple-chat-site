@@ -38,10 +38,6 @@
     <h3>Online</h3>
     <div id="onlineList"></div>
 
-    <h3>Emoji</h3>
-    <input id="emojiSearch" placeholder="Search emoji..." maxlength="40" />
-    <div id="emojiList"></div>
-
     <h3>Emoticons</h3>
     <div id="emoticonList"></div>
 
@@ -67,12 +63,23 @@
     <!-- INPUT BAR -->
     <div id="inputBar">
 
+      <button class="iconBtn" type="button" onclick="toggleEmojiPicker()">😊</button>
       <button class="iconBtn" type="button" onclick="triggerImageUpload()">📷</button>
       <button class="iconBtn" type="button" onclick="toggleGifPicker()">GIF</button>
 
       <input id="messageInput" placeholder="Message..." maxlength="2000" />
 
       <button id="sendButton" type="button">Send</button>
+
+      <!-- EMOJI POPUP -->
+      <div id="emojiPicker" class="hidden">
+        <div id="emojiPickerHeader">
+          <input id="emojiSearch" placeholder="Search emoji..." maxlength="40" />
+          <button type="button" onclick="toggleEmojiPicker()">✕</button>
+        </div>
+        <div id="emojiPickerBody"></div>
+      </div>
+
     </div>
 
     <!-- GIF PANEL -->
