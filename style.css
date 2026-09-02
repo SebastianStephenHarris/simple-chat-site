@@ -328,6 +328,17 @@ body {
   color: var(--color);
   padding: 5px;
 }
+#renameColorWrap {
+  flex: 0 0 auto;
+}
+#renameColor {
+  width: 34px;
+  height: 34px;
+  padding: 2px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  cursor: pointer;
+}
 #onlineList {
   display: flex;
   flex-direction: column;

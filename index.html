@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Chatroom</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 
 <body>
@@ -31,6 +31,9 @@
 
     <div id="renameBox" class="hidden">
       <input id="renameInput" placeholder="New username" maxlength="32" />
+      <label id="renameColorWrap">
+        <input id="renameColor" type="color" title="Name colour" />
+      </label>
       <button onclick="saveRename()">Save</button>
       <button onclick="toggleRename()">✕</button>
     </div>
@@ -94,6 +97,6 @@
   </div>
 </div>
 
-<script src="script.js"></script>
+<script src="script.js?v=2"></script>
 </body>
 </html>

@@ -236,7 +236,9 @@ function logout() {
 }
 
 function setProfile() {
-  document.getElementById("profileName").textContent = username || "";
+  const el = document.getElementById("profileName");
+  el.textContent = username || "";
+  el.style.color = isValidColor(userColor) ? userColor : "";
 }
 
 /* ---------------- CONNECTION ---------------- */
@@ -805,6 +807,7 @@ function toggleRename() {
   box.classList.toggle("hidden");
   if (!box.classList.contains("hidden")) {
     document.getElementById("renameInput").value = username;
+    document.getElementById("renameColor").value = userColor;
     document.getElementById("renameInput").focus();
   }
 }
@@ -812,18 +815,23 @@ function toggleRename() {
 function saveRename() {
   const input = document.getElementById("renameInput");
   const newName = input.value.trim().slice(0, 32);
+  const newColor = document.getElementById("renameColor").value;
   if (!newName) {
     alert("Enter a username");
     return;
   }
-  if (newName === username) {
-    toggleRename();
-    return;
+
+  const nameChanged = newName !== username;
+  const colorChanged = newColor !== userColor;
+
+  if (nameChanged || colorChanged) {
+    sendPayload({ type: "rename", username: newName, color: newColor });
   }
 
-  sendPayload({ type: "rename", username: newName, color: userColor });
   username = newName;
+  userColor = newColor;
   STORE.set(STORE.name, newName);
+  STORE.set(STORE.color, newColor);
   setProfile();
   toggleRename();
 }
