@@ -11,6 +11,7 @@ let fmtBold = false;
 let fmtItalic = false;
 let fmtUnderline = false;
 let fmtColor = "";
+let currentTheme = "default";
 
 const FONTS = [
   { value: "", name: "System" },
@@ -86,8 +87,9 @@ const THEMES = [
 
 function applyTheme(id) {
   if (id === "hacker") id = "oldschool"; // migrate old id
-  if (id && id !== "default") {
-    document.body.setAttribute("data-theme", id);
+  currentTheme = id && id !== "default" ? id : "default";
+  if (currentTheme !== "default") {
+    document.body.setAttribute("data-theme", currentTheme);
   } else {
     document.body.removeAttribute("data-theme");
   }
@@ -720,7 +722,7 @@ function renderMessage(d, isMine) {
     name.textContent = d.username;
     bubble.appendChild(name);
 
-    if (document.body.dataset.theme === "oldschool") {
+    if (currentTheme === "oldschool") {
       const time = document.createElement("span");
       time.className = "msgTime";
       time.textContent = formatTime(d.ts || Date.now());
