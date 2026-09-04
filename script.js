@@ -670,13 +670,14 @@ function sendMessage() {
 
   const id = uid();
   const fmt = currentFormat();
+  const reply = replyingTo;
   input.value = "";
   sendTyping(false);
   clearReply();
 
-  renderMessage({ type: "message", id, senderId: myClientId, username, color: userColor, text, fmt, reply: replyingTo }, true);
+  renderMessage({ type: "message", id, senderId: myClientId, username, color: userColor, text, fmt, reply }, true);
 
-  if (!sendPayload({ type: "message", id, username, color: userColor, text, fmt, reply: replyingTo })) {
+  if (!sendPayload({ type: "message", id, username, color: userColor, text, fmt, reply })) {
     setStatusHint("Not connected — message was not sent");
   }
 
@@ -722,7 +723,7 @@ function renderMessage(d, isMine) {
     name.textContent = d.username;
     bubble.appendChild(name);
 
-    if (currentTheme === "oldschool") {
+    {
       const time = document.createElement("span");
       time.className = "msgTime";
       time.textContent = formatTime(d.ts || Date.now());

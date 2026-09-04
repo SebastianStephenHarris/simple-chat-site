@@ -517,6 +517,7 @@ body {
   border-color: var(--bubble-hover-border);
 }
 .msgTime {
+  display: none;
   color: var(--muted);
   font-size: 0.8em;
   opacity: 0.8;
@@ -1333,7 +1334,7 @@ body:not([data-theme]) #sendButton:hover {
 [data-theme="oldschool"] .theirs {
   display: block;
   justify-content: flex-start;
-  align-items: flex-start;
+  align-items: center;
   text-align: left;
   border-bottom: none;
   padding: 0;
@@ -1349,7 +1350,7 @@ body:not([data-theme]) #sendButton:hover {
 [data-theme="oldschool"] .bubble {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   background: transparent !important;
   border: none !important;
   border-radius: 0 !important;
@@ -1371,7 +1372,7 @@ body:not([data-theme]) #sendButton:hover {
 [data-theme="oldschool"] .bubble .fmtBody {
   font-size: 12px;
   line-height: 1.4;
-  vertical-align: baseline;
+  vertical-align: middle;
 }
 [data-theme="oldschool"] .bubble strong {
   color: #333333;
@@ -1385,6 +1386,7 @@ body:not([data-theme]) #sendButton:hover {
   font-weight: normal;
 }
 [data-theme="oldschool"] .bubble .msgTime {
+  display: inline;
   color: #808080;
   opacity: 0.8;
   margin-right: 4px;

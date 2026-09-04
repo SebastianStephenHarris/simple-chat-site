@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <title>Chatroom</title>
-  <link rel="stylesheet" href="style.css?v=15">
+  <link rel="stylesheet" href="style.css?v=16">
 </head>
 
 <body>
@@ -95,15 +95,14 @@
           <span>◑</span>
           <input id="fmtColor" type="color" value="#000000" />
         </label>
+        <button class="iconBtn" type="button" onclick="toggleEmojiPicker()">😊</button>
+        <button class="iconBtn" type="button" onclick="triggerImageUpload()">📷</button>
+        <button class="iconBtn" type="button" onclick="toggleGifPicker()">GIF</button>
       </div>
 
       <div id="fontMenu" class="hidden"></div>
 
       <div id="inputWrap">
-        <button class="iconBtn" type="button" onclick="toggleEmojiPicker()">😊</button>
-        <button class="iconBtn" type="button" onclick="triggerImageUpload()">📷</button>
-        <button class="iconBtn" type="button" onclick="toggleGifPicker()">GIF</button>
-
         <input id="messageInput" placeholder="Message..." maxlength="2000" />
 
         <button id="sendButton" type="button">Send</button>
@@ -132,6 +131,6 @@
   </div>
 </div>
 
-<script src="script.js?v=14"></script>
+<script src="script.js?v=15"></script>
 </body>
 </html>
